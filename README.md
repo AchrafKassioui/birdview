@@ -2,7 +2,7 @@
 
 User interface experiment and JavaScript plugin.
 
-Get a glance at a whole web page with an aerial view.
+**Get a glance at a whole web page with an aerial view.**
 
 ## Demo
 
