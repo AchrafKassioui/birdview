@@ -619,6 +619,6 @@
 
 Todo:
 
-- When birdview only, keyboard navigation on overlay only
+- When birdview overlay, keyboard navigation on overlay only
 
 **/
