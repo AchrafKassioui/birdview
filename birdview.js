@@ -293,8 +293,7 @@
         if(viewport_height >= document_height){
             try{pageFits()}
             catch(error){console.log('Birdview: Web Animation API is not supported')}
-            console.log('Birdview: page already fits into the viewport');
-            return;
+            return console.log('Birdview: page already fits into the viewport');
         }
         scaled = true;
         toggleOverlay();
@@ -445,7 +444,7 @@
         }
 
         if(e.type === 'touchstart'){
-            // If there is a single touch, consider as a user tap
+            // If there is a single touch, treat as a tap
             if(e.touches.length === 1){
                 if(scaled){
                     var target = e.target;
@@ -615,10 +614,10 @@
     return birdview;
 });
 
-/**
+/*///////////////////////////////////////////////////////////////////////
 
-Todo:
+To do:
 
-- When birdview overlay, keyboard navigation on overlay only
+- When in birdview mode, keyboard navigation should select options in the birdview overlay only.
 
-**/
+///////////////////////////////////////////////////////////////////////*/
