@@ -1,4 +1,4 @@
-# Birdview
+# Birdview.js
 
 ![Screenshot](birdview_banner.png)
 
