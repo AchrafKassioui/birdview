@@ -460,11 +460,12 @@
             }
 
             // The multi-touch handling logic is inspired by reveal.js https://github.com/hakimel/reveal.js/blob/master/js/reveal.js
+            // Store the coordinates of the first touch
             touch.startX = e.touches[0].clientX;
             touch.startY = e.touches[0].clientY;
             touch.count = e.touches.length;
 
-            // If there are two touches we need to memorize the distance between those two points to detect pinching
+            // If there are two touches we need to memorize the distance between these two points to detect pinching
             if(e.touches.length === 2){
                 touch.startSpan = distanceBetween({
                     x: e.touches[1].clientX,
