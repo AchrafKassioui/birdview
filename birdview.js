@@ -166,7 +166,7 @@
         if(overlay) overlay.parentNode.removeChild(overlay);
     }
 
-    // Creates a div to show debug messages on touch devices. Used with function log(message)
+    // Create a div to show debug messages on touch devices. Use with function log(message)
     function createDebug(){
         debug = document.createElement('div');
         debug.id = 'birdview_debug';
