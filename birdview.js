@@ -1,8 +1,9 @@
 ////////////////////////////////////////////////////////////////////////
 //
 // Birdview.js
-// 1.5.6
-// 7 February 2019
+// 1.5.7
+// Current version: 28 February 2019
+// First version: 20 May 2017
 //
 // www.achrafkassioui.com/birdview/
 //
@@ -33,7 +34,6 @@
         root.birdview = factory(root);
     }
 })(typeof global !== 'undefined' ? global : typeof window !== 'undefined' ? window : this, function(window){
-
     'use strict';
 
     ////////////////////////////////////////////////////////////////////////
