@@ -47,3 +47,7 @@ birdview.destroy();
 ```
 
 The destruction method is called inside the initialization method. Calling `birdview.init()` multiple times shouldn't create any undesirable overlapping.
+
+## License
+
+Birdview.js is published under the [GNU General Public License](https://www.gnu.org/licenses/gpl-3.0.en.html).
