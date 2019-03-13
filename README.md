@@ -23,10 +23,10 @@ birdview.init();
 
 ## Usage
 
-You can trigger birdview by either:
+To trigger birdview, you can either:
 
-- **Pressing the Z key**
-- **Pinch-in gesture** on a touch device
+- **Press the Z key**
+- **Pinch-in** on a touch device
 
 You can also trigger birdview by clicking any HTML element with a `birdview_toggle` class:
 
