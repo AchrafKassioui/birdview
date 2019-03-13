@@ -15,7 +15,7 @@ Include `birdview.js` and `birdview.css` in HTML:
 <script type="text/javascript" src="birdview.js"></script>
 ```
 
-Enable Birdview with the initialization method:
+Then enable Birdview with the initialization method:
 
 ```
 birdview.init();
