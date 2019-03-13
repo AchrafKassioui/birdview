@@ -4,7 +4,7 @@
 
 **Get a glance at a whole web page with an aerial view.**
 
-[**Demo & documentation**](https://www.achrafkassioui.com/birdview/)
+See [**demo & full documentation here**](https://www.achrafkassioui.com/birdview/).
 
 ## Setup
 
