@@ -623,6 +623,6 @@
 To do:
 
 - When in birdview mode, keyboard navigation should select options in the birdview overlay only.
-- Add setting to disable pinch to birdview
+- Add setting to disable pinch to birdview.
 
 ///////////////////////////////////////////////////////////////////////*/
