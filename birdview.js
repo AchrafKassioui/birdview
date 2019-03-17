@@ -618,11 +618,11 @@
     return birdview;
 });
 
-/*///////////////////////////////////////////////////////////////////////
+/*
 
 To do:
 
-- When in birdview mode, keyboard navigation should select options in the birdview overlay only.
-- Add setting to disable pinch to birdview.
+- When in birdview and the overlay is active, keyboard navigation should select options in the overlay only.
+- Add a setting to disable pinch gestures.
 
-///////////////////////////////////////////////////////////////////////*/
+*/
