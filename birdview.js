@@ -1,8 +1,8 @@
 ////////////////////////////////////////////////////////////////////////
 //
 // Birdview.js
-// 1.5.7
-// Current version: 28 February 2019
+// 1.5.8
+// Current version: 17 March 2019
 // First version: 20 May 2017
 //
 // www.achrafkassioui.com/birdview/
@@ -574,8 +574,11 @@
         if(settings.speed != 0) child.addEventListener("transitionend", eventHandler, false);
         if('ontouchstart' in window){
             // Active event listeners. See: https://developers.google.com/web/updates/2017/01/scrolling-intervention
-            document.addEventListener('touchstart', eventHandler, {passive: false});
-            document.addEventListener('touchmove', eventHandler, {passive: false});
+            // document.addEventListener('touchstart', eventHandler, {passive: false});
+            // document.addEventListener('touchmove', eventHandler, {passive: false});
+            // Not using "passive:false" anymore in order to allow zoom in and out on Chrome Android
+            document.addEventListener('touchstart', eventHandler);
+            document.addEventListener('touchmove', eventHandler);
         }
         document.addEventListener('keydown', eventHandler, false);
         document.addEventListener('click', eventHandler, false);
@@ -598,8 +601,8 @@
         reference_zoom_level = null;
 
         if('ontouchstart' in window){
-            document.removeEventListener('touchstart', eventHandler, {passive: false});
-            document.removeEventListener('touchmove', eventHandler, {passive: false});
+            document.removeEventListener('touchstart', eventHandler);
+            document.removeEventListener('touchmove', eventHandler);
         }
         document.removeEventListener('keydown', eventHandler, false);
         document.removeEventListener('click', eventHandler, false);
@@ -620,5 +623,6 @@
 To do:
 
 - When in birdview mode, keyboard navigation should select options in the birdview overlay only.
+- Add setting to disable pinch to birdview
 
 ///////////////////////////////////////////////////////////////////////*/
