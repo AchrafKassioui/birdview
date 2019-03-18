@@ -141,7 +141,7 @@
 
     function createButton(){
         birdview_button = document.createElement('button');
-        birdview_button.innerHTML = settings.button_text;
+        birdview_button.innerText = settings.button_text;
         birdview_button.id = 'auto_generated_birdview_button';
         birdview_button.classList.add('birdview_toggle');
         body.appendChild(birdview_button);
