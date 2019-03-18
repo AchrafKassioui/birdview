@@ -1,8 +1,8 @@
 ////////////////////////////////////////////////////////////////////////
 //
 // Birdview.js
-// 1.5.8
-// Current version: 17 March 2019
+// 1.5.9
+// Current version: 18 March 2019
 // First version: 20 May 2017
 //
 // www.achrafkassioui.com/birdview/
@@ -92,6 +92,7 @@
     var defaults = {
         shortcut: 90,
         button: false,
+        button_text: 'Z',
         overlay: true,
         speed: 0.3,
         easing: 'ease',
@@ -127,7 +128,6 @@
         focused.focus(); // Restore the focused element
         if(settings.button) createButton();
         if(settings.overlay) createOverlay();
-        if(settings.debug) createDebug();
     }
 
     function restoreDOM(){
@@ -137,12 +137,11 @@
         parent = null;
         removeButton();
         removeOverlay();
-        removeDebug();
     }
 
     function createButton(){
         birdview_button = document.createElement('button');
-        birdview_button.innerHTML = 'Z';
+        birdview_button.innerHTML = settings.button_text;
         birdview_button.id = 'auto_generated_birdview_button';
         birdview_button.classList.add('birdview_toggle');
         body.appendChild(birdview_button);
@@ -164,23 +163,6 @@
     function removeOverlay(){
         var overlay = document.getElementById('auto_generated_birdview_overlay');
         if(overlay) overlay.parentNode.removeChild(overlay);
-    }
-
-    // Create a div to show debug messages on touch devices. Use with function log(message)
-    function createDebug(){
-        debug = document.createElement('div');
-        debug.id = 'birdview_debug';
-        debug.innerHTML = 'DEBUG';
-        body.appendChild(debug);
-    }
-
-    function removeDebug(){
-        var debug = document.getElementById('birdview_debug');
-        if(debug) debug.parentNode.removeChild(debug);
-    }
-
-    function log(message){
-        if(debug) debug.innerHTML = Date.now() + ': ' + message;
     }
 
     ////////////////////////////////////////////////////////////////////////
