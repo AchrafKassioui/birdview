@@ -1,8 +1,8 @@
 /*
 *
 * Birdview.css
-* 1.1
-* 17 March 2019
+* 1.2
+* 18 March 2019
 *
 * www.achrafkassioui.com/birdview/
 *
@@ -15,21 +15,21 @@
 ****************************************************/
 
 #auto_generated_birdview_button{
-    position: fixed;
+     position: fixed;
     display: block;
-    width: 60px;
-    height: 60px;
+    min-width: 44px;
+    height: 44px;
     right: 8px;
     top: 8px;
     margin: 0;
     padding: 0;
     text-align: center;
     color: #fff;
-    font-family: arial, sans-serif;
+    font-family: monospace;
     font-style: normal;
     font-weight: 500;
-    font-size: 40px;
-    line-height: 54px;
+    font-size: 32px;
+    line-height: 44px;
     border: none;
     border-radius: 4px;
     background: #01d1fb;
