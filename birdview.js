@@ -1,8 +1,8 @@
 ////////////////////////////////////////////////////////////////////////
 //
 // Birdview.js
-// 1.5.9
-// Current version: 18 March 2019
+// 1.6
+// Current version: 10 May 2019
 // First version: 20 May 2017
 //
 // www.achrafkassioui.com/birdview/
@@ -52,9 +52,7 @@
     var parent;
     var child;
 
-    var birdview_button;
     var overlay;
-    var debug;
 
     var document_height;
     var viewport_height;
@@ -62,7 +60,7 @@
 
     var css_transform_origin_Y = 0;
 
-    var zoom_level;
+    var current_zoom_level;
     var reference_zoom_level;
 
     var touch = {
@@ -91,14 +89,16 @@
 
     var defaults = {
         shortcut: 90,
-        button: false,
-        button_text: 'Z',
-        overlay: true,
+        button: true,
+        button_text: 'Birdview',
         speed: 0.3,
         easing: 'ease',
+        overlay: true,
+        overlay_transition: 0.3,
         origin_X: 50,
         callback_start: null,
         callback_end: null,
+        touch: true,
         debug: false
     }
 
@@ -140,11 +140,11 @@
     }
 
     function createButton(){
-        birdview_button = document.createElement('button');
+        var birdview_button = document.createElement('button');
         birdview_button.innerText = settings.button_text;
         birdview_button.id = 'auto_generated_birdview_button';
         birdview_button.classList.add('birdview_toggle');
-        body.appendChild(birdview_button);
+        child.appendChild(birdview_button);
     }
 
     function removeButton(){
@@ -156,7 +156,7 @@
         overlay = document.createElement('div');
         overlay.id = 'auto_generated_birdview_overlay';
         if(settings.speed === 0) overlay.style.transitionDuration = '0s';
-        else overlay.style.transitionDuration = '0.1s';
+        else overlay.style.transitionDuration = settings.overlay_transition + 's';
         body.appendChild(overlay);
     }
 
@@ -203,9 +203,9 @@
     }
 
     // This function works on Mobile Safari and Firefox Android. I didn't find a way to detect a zoom change on Chrome Android.
-    function currentZoomLevel(){
-        var current_zoom_level = window.screen.width / window.innerWidth;
-        return current_zoom_level;
+    function getZoomLevel(){
+        var zoom_level = window.screen.width / window.innerWidth;
+        return zoom_level;
     }
 
     function distanceBetween(a,b){
@@ -308,7 +308,7 @@
 
     function toggleOverlay(){
         if(!settings.overlay) return;
-        if(settings.speed === 0) scaled ? showMenu() : hideOverlay();
+        if(settings.speed === 0) scaled ? buildMenu() : hideOverlay();
         // Handle overlay display with transitionend event
         else showLoading();
     }
@@ -319,10 +319,9 @@
         var h1 = document.createElement('h1');
         h1.innerText = 'Zooming...';
         overlay.appendChild(h1);
-        if(settings.button) birdview_button.classList.remove('hidden');
     }
 
-    function showMenu(){
+    function buildMenu(){
         if(overlay.classList.contains('zooming')) overlay.classList.remove('zooming');
         if(!overlay.classList.contains('show')) overlay.classList.add('show');
         while (overlay.firstChild) overlay.removeChild(overlay.firstChild);
@@ -355,31 +354,29 @@
         var span = document.createElement('span');
         span.innerHTML = 'Click to dive<br>Press Z or pinch to toggle birdview';
         overlay.appendChild(span);
-
-        if(settings.button) birdview_button.classList.add('hidden');
     }
 
     function hideOverlay(){
         if(overlay.classList.contains('show')) overlay.classList.remove('show');
-        if(settings.button) birdview_button.classList.remove('hidden');
         while (overlay.firstChild) overlay.removeChild(overlay.firstChild);
     }
 
     ////////////////////////////////////////////////////////////////////////
     //
-    // Events handlers
+    // Event handler
     //
     ////////////////////////////////////////////////////////////////////////
 
     function eventHandler(e){
         if(e.type === 'transitionend'){
-            if(scaled) showMenu();
+            if(scaled) buildMenu();
             else{
                 /*
                 *
                 * Remove any transform from ancestors, so elements get fixed positioning back
                 * See: https://www.w3.org/TR/css-transforms-1/#propdef-transform
-                * and https://gist.github.com/claus/622a938d21d80f367251dc2eaaa1b2a9
+                * and: https://gist.github.com/claus/622a938d21d80f367251dc2eaaa1b2a9
+                * and: https://www.achrafkassioui.com/blog/position-fixed-and-CSS-transforms/
                 *
                 */
                 removeTransforms();
@@ -389,7 +386,9 @@
 
         if(e.type === 'resize' && scaled) birdviewCSS();
 
-        if(e.type === 'orientationchange') reference_zoom_level = currentZoomLevel();
+        if(e.type === 'orientationchange'){
+            reference_zoom_level = getZoomLevel();
+        }
 
         if(e.type === 'keydown'){
             var tag = e.target.tagName.toLowerCase();
@@ -407,17 +406,22 @@
                 birdview.toggle();
             }else if(scaled){
                 var tag = target.tagName.toLowerCase();
+                // If the target is a link, navigate directly without zooming
                 if(tag === 'a' || target.parentNode.tagName.toLowerCase() === 'a'){
                     return;
+
+                // Dive only if the target is not an element of the overlay
                 }else if(tag != 'h1' && tag != 'a' && tag != 'button'){
                     dive(e.clientY);
+
+                // Toggle birdview instead of dive if the target is the overlay title
                 }else if(tag === 'h1'){
                     birdview.toggle();
                 }
             }
         }
 
-        if(e.type === 'scroll' || e.type === 'mousewheel' || e.type === 'onwheel' || e.type === 'DOMMouseScroll' || e.type === 'onmousewheel'){
+        if(e.type === 'scroll' || e.type === 'wheel'){
             exitBirdview();
         }
 
@@ -426,18 +430,16 @@
         }
 
         if(e.type === 'touchstart'){
-            // If there is a single touch, treat as a tap
-            if(e.touches.length === 1){
-                if(scaled){
-                    var target = e.target;
-                    var tag = target.tagName.toLowerCase();
-                    if(tag === 'a' || target.parentNode.tagName.toLowerCase() === 'a'){
-                        return;
-                    }else if(tag != 'h1' && tag != 'a' && tag != 'button'){
-                        dive(e.touches[0].clientY);
-                    }else if(tag === 'h1'){
-                        birdview.toggle();
-                    }
+            // If there is a single touch in birdview mode, treat as a tap
+            if(e.touches.length === 1 && scaled){
+                var target = e.target;
+                var tag = target.tagName.toLowerCase();
+                if(tag === 'a' || target.parentNode.tagName.toLowerCase() === 'a'){
+                    return;
+                }else if(tag != 'h1' && tag != 'a' && tag != 'button'){
+                    dive(e.touches[0].clientY);
+                }else if(tag === 'h1'){
+                    birdview.toggle();
                 }
             }
 
@@ -465,12 +467,13 @@
 
             /*
             *
-            * We want to trigger birdview with a pinch in, but we don't want to disable the pinch out zoom
+            * We want to trigger birdview with a pinch in, but we don't want to mess with the native pinch to zoom
+            * A pinch in should trigger Birdview only if the document is at 1:1
             * Test the zoom level of the document relative to a reference value stored on first load. Proceed only if the page is not zoomed in
             *
             */
-            zoom_level = currentZoomLevel();
-            if(zoom_level != reference_zoom_level) return;
+            current_zoom_level = getZoomLevel();
+            if(current_zoom_level != reference_zoom_level) return;
 
             // If the touch started with two points and still has two active touches, test for the pinch gesture
             if(e.touches.length === 2 && touch.count === 2){
@@ -551,24 +554,27 @@
         settings = extend(defaults, options || {} );
         setupDOM();
         updateMeasurements();
-        reference_zoom_level = currentZoomLevel();
+        reference_zoom_level = getZoomLevel();
 
         if(settings.speed != 0) child.addEventListener("transitionend", eventHandler, false);
-        if('ontouchstart' in window){
+
+        if(settings.touch){
             // Active event listeners. See: https://developers.google.com/web/updates/2017/01/scrolling-intervention
             // document.addEventListener('touchstart', eventHandler, {passive: false});
             // document.addEventListener('touchmove', eventHandler, {passive: false});
             // Not using "passive:false" anymore in order to allow zoom in and out on Chrome Android
-            document.addEventListener('touchstart', eventHandler);
-            document.addEventListener('touchmove', eventHandler);
+            // I need to put passive listeners back again for Mobile Safari
+            document.addEventListener('touchstart', eventHandler, {passive: false, capture: false});
+            document.addEventListener('touchmove', eventHandler, {passive: false, capture: false});
         }
+
         document.addEventListener('keydown', eventHandler, false);
         document.addEventListener('click', eventHandler, false);
-        window.addEventListener('scroll', eventHandler, false);
-        window.addEventListener('resize', eventHandler, false);
-        window.addEventListener("orientationchange", eventHandler, false);
+        document.addEventListener('scroll', eventHandler, false);
+        document.addEventListener('resize', eventHandler, false);
+        document.addEventListener("orientationchange", eventHandler, false);
 
-        if(settings.debug) console.log('Birdview is running');
+        console.log('Birdview is running');
     };
 
     ////////////////////////////////////////////////////////////////////////
@@ -582,19 +588,21 @@
         restoreDOM();
         reference_zoom_level = null;
 
-        if('ontouchstart' in window){
-            document.removeEventListener('touchstart', eventHandler);
-            document.removeEventListener('touchmove', eventHandler);
+        if(settings.touch){
+            document.removeEventListener('touchstart', eventHandler, {passive: false, capture: false});
+            document.removeEventListener('touchmove', eventHandler, {passive: false, capture: false});
         }
+
         document.removeEventListener('keydown', eventHandler, false);
         document.removeEventListener('click', eventHandler, false);
-        window.removeEventListener('scroll', eventHandler, false);
-        window.removeEventListener('resize', eventHandler, false);
-        window.removeEventListener("orientationchange", eventHandler, false);
+        document.removeEventListener('scroll', eventHandler, false);
+        document.removeEventListener('resize', eventHandler, false);
+        document.removeEventListener("orientationchange", eventHandler, false);
 
         scaled = false;        
-        if(settings.debug) console.log('Birdview was destroyed');
         settings = null;
+        
+        console.log('Birdview was destroyed');
     }
 
     return birdview;
@@ -605,6 +613,5 @@
 To do:
 
 - When in birdview and the overlay is active, keyboard navigation should select options in the overlay only.
-- Add a setting to disable pinch gestures.
 
 */
