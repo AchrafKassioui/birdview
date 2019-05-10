@@ -421,7 +421,7 @@
             }
         }
 
-        if(e.type === 'scroll' || e.type === 'wheel'){
+        if(e.type === 'scroll'){
             exitBirdview();
         }
 
