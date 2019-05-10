@@ -572,7 +572,7 @@
         document.addEventListener('click', eventHandler, false);
         document.addEventListener('scroll', eventHandler, false);
         document.addEventListener('resize', eventHandler, false);
-        document.addEventListener("orientationchange", eventHandler, false);
+        document.addEventListener('orientationchange', eventHandler, false);
 
         console.log('Birdview is running');
     };
@@ -597,7 +597,7 @@
         document.removeEventListener('click', eventHandler, false);
         document.removeEventListener('scroll', eventHandler, false);
         document.removeEventListener('resize', eventHandler, false);
-        document.removeEventListener("orientationchange", eventHandler, false);
+        document.removeEventListener('orientationchange', eventHandler, false);
 
         scaled = false;        
         settings = null;
