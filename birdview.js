@@ -2,7 +2,7 @@
 //
 // Birdview.js
 // 1.6
-// Current version: 10 May 2019
+// Current version: 11 May 2019
 // First version: 20 May 2017
 //
 // www.achrafkassioui.com/birdview/
@@ -142,26 +142,26 @@
     function createButton(){
         var birdview_button = document.createElement('button');
         birdview_button.innerText = settings.button_text;
-        birdview_button.id = 'auto_generated_birdview_button';
+        birdview_button.id = 'birdview_auto_generated_button';
         birdview_button.classList.add('birdview_toggle');
         child.appendChild(birdview_button);
     }
 
     function removeButton(){
-        var button = document.getElementById('auto_generated_birdview_button');
+        var button = document.getElementById('birdview_auto_generated_button');
         if(button) button.parentNode.removeChild(button);
     }
 
     function createOverlay(){
         overlay = document.createElement('div');
-        overlay.id = 'auto_generated_birdview_overlay';
+        overlay.id = 'birdview_auto_generated_overlay';
         if(settings.speed === 0) overlay.style.transitionDuration = '0s';
         else overlay.style.transitionDuration = settings.overlay_transition + 's';
         body.appendChild(overlay);
     }
 
     function removeOverlay(){
-        var overlay = document.getElementById('auto_generated_birdview_overlay');
+        var overlay = document.getElementById('birdview_auto_generated_overlay');
         if(overlay) overlay.parentNode.removeChild(overlay);
     }
 
@@ -564,7 +564,7 @@
             // document.addEventListener('touchmove', eventHandler, {passive: false});
             // Not using "passive:false" anymore in order to allow zoom in and out on Chrome Android
             // I need to put passive listeners back again for Mobile Safari
-            document.addEventListener('touchstart', eventHandler, {passive: false, capture: false});
+            document.addEventListener('touchstart', eventHandler, false);
             document.addEventListener('touchmove', eventHandler, {passive: false, capture: false});
         }
 
@@ -589,7 +589,7 @@
         reference_zoom_level = null;
 
         if(settings.touch){
-            document.removeEventListener('touchstart', eventHandler, {passive: false, capture: false});
+            document.removeEventListener('touchstart', eventHandler, false);
             document.removeEventListener('touchmove', eventHandler, {passive: false, capture: false});
         }
 
