@@ -2,7 +2,7 @@
 *
 * Birdview.css
 * 1.5
-* 10 May 2019
+* 11 May 2019
 *
 * www.achrafkassioui.com/birdview/
 *
@@ -10,11 +10,11 @@
 
 /****************************************************
 *
-* Birdview button
+* Button
 *
 ****************************************************/
 
-#auto_generated_birdview_button{
+#birdview_auto_generated_button{
     position: absolute;
     display: block;
     min-width: 44px;
@@ -38,7 +38,7 @@
 }
 
 /* Pseudo element to extend the target area */
-#auto_generated_birdview_button:after{
+#birdview_auto_generated_button:after{
     position: absolute;
     content: '';
     /* Full parent width + parent's right margin + parent's borders width */
@@ -48,15 +48,15 @@
     bottom: -9px;
 }
 
-#auto_generated_birdview_button:hover,
-#auto_generated_birdview_button:active,
-#auto_generated_birdview_button:focus{
+#birdview_auto_generated_button:hover,
+#birdview_auto_generated_button:active,
+#birdview_auto_generated_button:focus{
     color: #fff;
     background: #01d1fb;
     outline: none;
 }
 
-#auto_generated_birdview_button::-moz-focus-inner{
+#birdview_auto_generated_button::-moz-focus-inner{
     border: 0;
 }
 
@@ -66,12 +66,12 @@
 *
 */
 @media screen and (max-width: 400px){
-    #auto_generated_birdview_button{
+    #birdview_auto_generated_button{
         min-width: 30px;
         font-size: 0;
     }
 
-    #auto_generated_birdview_button:after{
+    #birdview_auto_generated_button:after{
         content: 'Z';
         text-indent: -6px;
         font-size: 16px;
@@ -85,7 +85,7 @@
 *
 ****************************************************/
 
-#auto_generated_birdview_overlay{
+#birdview_auto_generated_overlay{
     position: fixed;
     width: 100%;
     height: 100%;
@@ -107,11 +107,12 @@
     opacity: 0;
 }
 
-#auto_generated_birdview_overlay.show{
+#birdview_auto_generated_overlay.show{
     pointer-events: auto;
     user-select: auto;
     -moz-user-select: auto;
     opacity: 1;
+    /* Prevents user pinching in Birdview mode in Chrome for Android */
     touch-action: none;
 }
 
@@ -120,7 +121,7 @@
 * Overlay title
 *
 */
-#auto_generated_birdview_overlay h1{
+#birdview_auto_generated_overlay h1{
     display: block;
     max-width: 10%;
     margin: 8px 16px 0px;
@@ -132,7 +133,7 @@
     line-height: 1.2em;
 }
 
-#auto_generated_birdview_overlay.zooming h1{
+#birdview_auto_generated_overlay.zooming h1{
     color: #01d1fb;
 }
 
@@ -141,7 +142,7 @@
 * Breadcrumb navigation
 *
 */
-#auto_generated_birdview_overlay a{
+#birdview_auto_generated_overlay a{
     display: inline-block;
     vertical-align: top;
     max-width: 33%;
@@ -158,13 +159,13 @@
     border: none;
 }
 
-#auto_generated_birdview_overlay a:first-of-type{
+#birdview_auto_generated_overlay a:first-of-type{
     margin-left: 14px;
 }
 
-#auto_generated_birdview_overlay a:hover,
-#auto_generated_birdview_overlay a:active,
-#auto_generated_birdview_overlay a:focus{
+#birdview_auto_generated_overlay a:hover,
+#birdview_auto_generated_overlay a:active,
+#birdview_auto_generated_overlay a:focus{
     color: #fff;
     background: #01d1fb;
 }
@@ -174,7 +175,7 @@
 * Close button
 *
 */
-#auto_generated_birdview_overlay button{
+#birdview_auto_generated_overlay button{
     position: absolute;
     width: 96px;
     height: 96px;
@@ -189,9 +190,9 @@
     cursor: pointer;
 }
 
-#auto_generated_birdview_overlay button:hover,
-#auto_generated_birdview_overlay button:active,
-#auto_generated_birdview_overlay button:focus{
+#birdview_auto_generated_overlay button:hover,
+#birdview_auto_generated_overlay button:active,
+#birdview_auto_generated_overlay button:focus{
     background-color: #01d1fb;
 }
 
@@ -200,7 +201,7 @@
 * Help message
 *
 */
-#auto_generated_birdview_overlay span{
+#birdview_auto_generated_overlay span{
     position: fixed;
     left: 0;
     bottom: 0;
@@ -218,25 +219,25 @@
 *
 */
 @media screen and (max-width: 768px){
-    #auto_generated_birdview_overlay a{
+    #birdview_auto_generated_overlay a{
         max-width: 25%;
         font-size: 16px;
     }
 
-    #auto_generated_birdview_overlay h1{
+    #birdview_auto_generated_overlay h1{
         margin: 4px 8px 0px;
         font-size: 32px;
     }
 
-    #auto_generated_birdview_overlay a{
+    #birdview_auto_generated_overlay a{
         max-width: 25%;
     }
 
-    #auto_generated_birdview_overlay a:first-of-type{
+    #birdview_auto_generated_overlay a:first-of-type{
         margin-left: 6px;
     }
 
-    #auto_generated_birdview_overlay button{
+    #birdview_auto_generated_overlay button{
         width: 72px;
         height: 72px;
         background-size: 32px;
