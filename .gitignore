@@ -1,0 +1,12 @@
+# Only the code, the README's banner and the license are published. Everything else stays local.
+*
+!.gitignore
+!README.md
+!LICENSE
+!birdview.js
+!birdview.css
+!index.html
+!css/
+!css/birdview_page.css
+!media/
+!media/birdview_banner.png

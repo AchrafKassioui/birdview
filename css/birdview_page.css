@@ -1,0 +1,504 @@
+/*************************************************************************************
+*
+* External
+*
+*************************************************************************************/
+
+@import url("https://use.typekit.net/gqp2vyu.css");
+@import url('/birdview/birdview.css');
+
+/*************************************************************************************
+*
+* Base
+*
+*************************************************************************************/
+
+body{
+    margin: 0;
+    padding: 0;
+    color: #000;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Oxygen-Sans, Ubuntu, Cantarell, sans-serif;
+    font-size: 16px;
+    line-height: 1;
+    background: #fff;
+}
+
+a, label, button, input{-webkit-tap-highlight-color: rgba(0, 0, 0, 0);}
+a{text-decoration-skip: ink;}
+img{border-style: none;} /* Removes borders around images on Internet Explorer */
+
+:focus{
+    outline: solid 4px #222;
+    outline-offset: 2px;
+}
+
+button::-moz-focus-inner{
+    border: 0;
+}
+
+/*************************************************************************************
+*
+* Typography
+*
+*************************************************************************************/
+
+#header,
+#main h3,
+#main h4,
+.options_button{
+    font-family: 'Futura-PT', sans-serif;
+}
+
+/*************************************************************************************
+*
+* Title
+*
+*************************************************************************************/
+
+#header{
+    text-align: center;
+    overflow: hidden;
+    background: #fff;
+}
+
+#title{
+    padding-bottom: 20em;
+    background-color: #02c6ed;
+    background-repeat: no-repeat;
+    background-position: center bottom;
+    /*background-image: url(../media/birdview_hero.png), radial-gradient(ellipse at top, #7de7fd 0%,#02c6ed 100%);
+    background-size: 1200px 450px, cover;*/
+    background-image: url(../media/birdview_hero.png);
+    background-size: 1200px 450px;
+}
+
+#title h1{
+    margin: 0;
+    padding: 0.25em 0 0;
+    font-weight: 700;
+    font-size: 4em;
+    letter-spacing: -1px;
+    margin-left: -1px;
+    transform: scaleY(1.15);
+    /*text-shadow: 0px 15px 6px rgba(0, 0, 0, 0.15);*/
+}
+#title h1 a{
+    text-decoration: none;
+    color: #fff;
+}
+
+#title h1 a:hover,
+#title h1 a:active{
+    color: #000;
+}
+
+#title h2{
+    margin: 0;
+    padding: 1em 0;
+    color: #000;
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 1em;
+    letter-spacing: 1px;
+    margin-right: -1px;
+    transform: scaleY(1.3);
+}
+
+#title p#gist{
+    max-width: 600px;
+    margin: 0.5em auto 1em;
+    padding: 0 1em;
+    color: #fff;
+    font-weight: 300;
+    font-size: 1.75em;
+    line-height: 1.2em;
+    cursor: pointer;
+}
+
+#birdview_button{
+    font-weight: 700;
+}
+
+#birdview_button{
+    display: block;
+    width: 7em;
+    height: 2em;
+    margin: auto;
+    color: #fff;
+    text-align: center;
+    font-family: inherit;
+    font-weight: 700;
+    font-size: 1.5em;
+    background: #01d1fb;
+    border: none;
+    border-radius: 6px;
+    box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+}
+
+#birdview_button:hover,
+#birdview_button:active{
+    padding: 0;
+    color: #02c6ed;
+    background: #fff;
+    outline: none;
+}
+
+/*************************************************************************************
+*
+* Features
+*
+*************************************************************************************/
+
+#features{
+    display: flex;
+    max-width: 1200px;
+    margin: auto;
+}
+
+#features div{
+    flex: 1;
+    padding: 16px;
+}
+
+#features img{
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: 32px auto 16px;
+}
+
+#features p{
+    display: block;
+    max-width: 300px;
+    margin: 0 auto;
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 1.7em;
+}
+
+hr{
+    display: none;
+}
+
+/*************************************************************************************
+*
+* Download
+*
+*************************************************************************************/
+
+#download{
+    max-width: 800px;
+    margin: 1em auto;
+    padding: 1em;
+    text-align: center;
+}
+
+.download_button{
+    position: relative;
+    display: inline-block;
+    vertical-align: top;
+    width: 200px;
+    height: 60px;
+    text-decoration: none;
+    margin-right: 4px;
+    color: #fff;
+    font-weight: 500;
+    font-size: 20px;
+    background: #02c6ed;
+    border: 3px solid #02c6ed;
+    border-radius: 6px;
+    line-height: 34px;
+    cursor: pointer;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.download_button:not(.repository){
+    line-height: 54px;
+}
+
+.download_button:hover,
+.download_button:focus{
+    color: #000;
+    background: #fff;
+    border-color: #000;
+}
+
+.download_button span{
+    display: block;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 12px;
+}
+.download_button:not(.repository):before{
+    position: absolute;
+    content: '';
+    width: 16px;
+    height: 21px;
+    top: 0.8em;
+    right: 0.8em;
+    background: url('../media/download_icon.png');
+    background-size: 16px 21px;
+    opacity: 0;
+}
+.download_button:hover:before,
+.download_button:focus:before{
+    opacity: 1;
+}
+
+.repository{
+    background: #333;
+    border-color: #333;
+}
+
+.warning{
+    color: red;
+    font-weight: 500;
+}
+
+#download h3{
+    margin: 1em auto 0;
+    font-weight: 500;
+    font-size: 18px;
+    text-decoration: underline;
+}
+
+#download p{
+    margin: 0.5em 0.5em 0.75em;
+    font-weight: 400;
+    font-size: 1em;
+    line-height: 1.3;
+}
+
+#download p a{
+    color: inherit;
+}
+
+/*************************************************************************************
+*
+* Article
+*
+*************************************************************************************/
+
+#main{
+    padding: 1em;
+    font-weight: 400;
+    background: #fff;
+}
+
+ul{
+    max-width: 42rem;
+    margin: auto;
+    padding-left: 2.5em;
+    list-style: square;
+    line-height: 1.6;
+}
+
+ul li{
+    margin-top: 1em;
+    padding: 0;
+}
+
+#main p{
+    max-width: 42rem;
+    margin: 1em auto 0;
+    line-height: 1.6;
+}
+
+#main h3{
+    margin: 1em;
+    text-align: center;
+    text-transform: uppercase;
+    color: #000;
+    font-weight: 500;
+    font-size: 2em;
+    letter-spacing: 6px;
+}
+
+h3 a{
+    color: inherit;
+    text-decoration: none;
+}
+
+h3 a:hover, h3 a:active{
+    color: #02c6ed;
+}
+
+#main h4{
+    max-width: 42rem;
+    margin: 2em auto 1em;
+    font-size: 20px;
+}
+
+code{
+    padding: 2px 4px;
+    font-family: 'Consolas', monospace;
+    font-weight: normal;
+    background: rgba(1, 209, 251, 0.1);
+    border-radius: 2px;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    -ms-word-break: break-all;
+    word-break: break-all;
+    word-break: break-word;
+}
+
+pre{
+    max-width: 42rem;
+    margin: 1em auto;
+    line-height: 1.3;
+    box-sizing: border-box;
+}
+
+pre code{
+    display: block;
+    padding: 0.75em;
+    font-size: 1em;
+    line-height: 1.4;
+    background: rgba(1, 209, 251, 0.05);
+    border: 2px solid #02c6ed;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+strong{
+    font-weight: 600;
+}
+
+#options ul{
+    color: #02c6ed;
+    list-style: square;
+}
+
+#options ul li span{
+    display: block;
+    color: #000;
+}
+
+.options_button{
+    display: inline-block;
+    vertical-align: top;
+    height: 36px;
+    margin-top: 5px;
+    padding: 0 1em;
+    color: #fff;
+    text-align: center;
+    font-weight: 600;
+    font-size: 16px;
+    background: #02c6ed;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    box-sizing: border-box;
+}
+
+.set{background: #02c6ed;}
+.set:active{background: #01d1fb; outline: none;}
+.set:focus{background: #01d1fb;}
+.set.active{background: #1ac53e;}
+
+.reset{color: #fff; background: #eee;}
+.reset:active{background: #f00; outline: none;}
+.reset:focus{background: #f00;}
+.reset.active{color: #fff; background: #f00;}
+
+#changelog ul{
+    list-style: none;
+    padding: 0;
+}
+
+#changelog li time{
+    display: block;
+    margin-bottom: 0.125em;
+    font-weight: 500;
+}
+
+/*************************************************************************************
+*
+* Footer
+*
+*************************************************************************************/
+
+#footer{
+    padding: 1.5em 1em;
+    text-align: center;
+    color: #999;
+    font-weight: 400;
+    line-height: 1.6;
+    background: #fff;
+}
+#footer a{padding: 1em;}
+#footer span{display: inline-block; padding: 0 1em;}
+
+/*************************************************************************************
+*
+* Responsive
+*
+*************************************************************************************/
+
+@media screen and (max-width: 1023px){
+    #title{
+        font-size: 13px;
+        background-size: 800px 300px;
+    }
+
+    #features{
+        flex-flow: column;
+    }
+
+    #features img{
+        display: inline-block;
+        margin-top: 16px;
+    }
+
+    #features p{
+        display: inline-block;
+        vertical-align: 48px;
+        max-width: 300px;
+        text-align: left;
+        font-size: 18px;
+    }
+
+    #features_control img{margin-left: -25px;}
+    #features_control p{margin-left: 25px;}
+
+    hr{
+        display: block;
+        width: 100%;
+        max-width: 570px;
+        height: 3px;
+        margin: auto;
+        border: none;
+        background: #eee;
+        background: rgba(128, 128, 128, 0.1);
+    }
+
+    .download_button{
+        display: block;        
+        margin: 8px auto;
+    }
+}
+
+@media screen and (max-width: 540px){
+    #features div{
+        margin: auto;
+    }
+
+    #features p{
+        display: block;
+        margin: 0;
+        text-align: center;
+    }
+
+    #main h3{
+        font-size: 1.75em;
+        letter-spacing: 3px;
+    }
+}
+
+@media screen and (max-width: 880px){
+    ul{
+        padding-left: 1.5em;
+    }   
+}

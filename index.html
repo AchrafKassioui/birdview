@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Birdview</title>
+    <meta name="Description" content="Get a glance at a whole web page with an aerial view." />
+    <meta name="theme-color" content="#02c6ed" />
+    <link rel="stylesheet" type="text/css" href="css/birdview_page.css"/>
+</head>
+<body>
+<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - HEADER -->
+    <header id="header">
+        <section id="title">
+            <h1><a href="">Birdview.js</a></h1>
+            <h2>UI&nbsp;experiment &amp;&nbsp;Javascript&nbsp;plugin</h2>
+            <p id="gist" class="birdview_toggle">Get a glance at a whole web&nbsp;page with&nbsp;an&nbsp;aerial&nbsp;view</p>
+            <button class="birdview_toggle" id="birdview_button">demo</button>
+        </section>
+
+<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - FEATURES -->
+
+        <section id="features">
+            <div>
+                <img src="media/birdview_fit_page.png" alt="birdview fit page icon" width="168">
+                <p>Fit a visual overview of the web page into your viewport</p>
+            </div>
+            <hr>
+            <div>
+                <img src="media/birdview_click_to_dive.png" alt="birdview click to dive icon" width="168">
+                <p>Dive into any part of the web page by clicking on the birdview</p>
+            </div>
+            <hr>
+            <div id="features_control">
+                <img src="media/birdview_shortcuts.png" alt="birdview shortcuts icon" width="168">
+                <p>Toggle birdview with a pinch gesture or a keyboard shortcut (default is Z)</p>
+            </div>
+            <hr>
+        </section>
+
+<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - DOWNLOAD -->
+
+        <section id="download">
+            <h3><a href="/" rel="author">Achraf Kassioui</a></h3>
+
+            <p>Updated <time datetime="2026-11-13">13 Nov 2026</time>. <a href="https://github.com/AchrafKassioui/birdview#change-log">Change&nbsp;log</a></p>
+
+            <a class="download_button" href="birdview.js">birdview.js</a>
+            <a class="download_button" href="birdview.css">birdview.css</a>
+            <a class="download_button repository" href="https://github.com/AchrafKassioui/birdview">Github <span>repository</span></a>
+        </section>
+        <hr>
+    </header>
+
+<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - MAIN -->
+
+    <article id="main">
+
+<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - EXAMPLES -->
+
+        <section id="examples">
+            <h3><a href="#examples">Examples</a></h3>
+            <p>You can try Birdview on various pages from this website:</p>
+            <ul>
+                <li><a href="/">Homepage</a>: see all website's content in one glance</li>
+                <li><a href="/3d/">3D visualization</a>: browse a gallery of 3D renderings</li>
+                <li><a href="/blog/">Blog</a>: notes about technology &amp; art</li>
+                <li><a href="/the-plane-the-canyon-and-the-clouds/making-of/">Making of the plane, the canyon &amp; the clouds</a>: long form article with text and figures</li>
+                <li><a href="/birdview/web/">Birdviews of the web</a>: birdviews of various websites</li>
+            </ul>
+        </section>
+
+<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - USAGE -->
+
+        <section id="usage">
+            <h3><a href="#usage">Usage</a></h3>
+
+            <h4 id="setup">1. Setup</h4>
+            <p>
+                Include <code>birdview.js</code> and <code>birdview.css</code> in your HTML file:
+            </p>
+
+<pre><code>&lt;link rel="stylesheet" type="text/css" href="birdview.css"/&gt;
+&lt;script type="text/javascript" src="birdview.js"&gt;&lt;/script&gt;</code></pre>
+
+            <h4 id="start">2. Start</h4>
+            <p>
+                Enable Birdview by calling the initialization method:
+            </p>
+
+<pre><code>birdview.init();</code></pre>
+
+            <h4 id="control">3. Control</h4>
+            <p>
+                You can trigger Birdview by pressing the Z key or with a pinch-in gesture on a touch device.
+            </p>
+            <p>
+                You can also trigger Birdview by clicking any HTML element with a <code>birdview_toggle</code> class:
+            </p>
+
+<pre><code>&lt;button class="birdview_toggle"&gt;Birdview&lt;/button&gt;</code></pre>
+
+            <p>
+                Or you can toggle Birdview programmatically using the toggle method:
+            </p>
+
+<pre><code>birdview.toggle();</code></pre>
+
+            <h4 id="stop">4. Stop</h4>
+            <p>
+                You can stop Birdview from running on your page by calling:
+            </p>
+
+<pre><code>birdview.destroy();</code></pre>
+
+            <p>
+                The destruction method is called inside the initialization method. Calling <code>birdview.init()</code> multiple times shouldn't create any undesirable overlapping.
+            </p>
+        </section>
+
+<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - OPTIONS -->
+
+        <section id="options">
+            <h3><a href="#options">Options</a></h3>
+            <p>
+                You can modify Birdview's default settings by passing a configuration object to the initialization method:
+            </p>
+
+<pre><code>birdview.init({
+    shortcut: 90,
+    button: true,
+    button_text: 'Birdview',
+    stiffness: 700,
+    overlay_transition: 0.3,
+    overlay: true,
+    origin_X: 50,
+    zoom_when_fits: 0.9,
+    callback_start: function(){},
+    callback_end: function(){}
+});</code></pre>
+
+            <h4 id="user-interface">1. User interface</h4>
+            <ul>
+                <li>
+                    <span><code>shortcut</code>: <i>Number</i><br>
+                    Keyboard keyCode. Default value is <i>90</i> for 'Z'.</span>
+                </li>
+                <li>
+                    <span>
+                    <code>button</code>: <i>Boolean</i><br>
+                    Creates a button on the page to toggle Birdview. Default value is <i>true</i>. The default CSS fixes the button in the upper right corner of the window. You can style the button in <code>birdview.css</code> with the ID <code>birdview_auto_generated_button</code>, or you can disable it and set your own button with a class of <code>birdview_toggle</code>.<br>
+                    <!-- <button class="options_button set" onclick="birdview.init({button: true});">Create button</button>
+                    <button class="options_button reset">Reset</button> -->
+                    </span>
+                </li>
+                <li>
+                    <span>
+                    <code>button_text</code>: <i>String</i><br>
+                    Text inside Birdview’s auto generated button. Default value is 'Birdview'.
+                    </span>
+                </li>
+                <li>
+                    <span>
+                    <code>overlay</code>: <i>Boolean</i><br>
+                    Shows a UI overlay when Birdview is active. Default value is <i>true</i>. Disabling the overlay allows direct action on click areas in Birdview mode. That's both handy&mdash;zoomable UI&mdash;and problematic&mdash;tiny click areas. You can style the overlay in <code>birdview.css</code> with the ID <code>birdview_auto_generated_overlay</code>.<br>
+                    <button class="options_button set" onclick="birdview.init({overlay: false}); birdview.toggle();">Disable overlay</button>
+                    <button class="options_button reset">Reset</button>
+                    </span>
+                </li>
+            </ul>
+
+            <h4 id="effects">2. Effects</h4>
+            <ul>
+                <li>
+                    <span>
+                    <code>stiffness</code>: <i>Number</i><br>
+                    How hard the spring that moves the zoom pulls it to where it goes. Higher is snappier. The spring never overshoots, and it can turn around at any moment. <i>0</i> turns the animation off. Default value is <i>700</i>.<br>
+                    <button class="options_button set" onclick="birdview.init({stiffness: 0}); birdview.toggle();">Stiffness = 0</button>
+                    <button class="options_button set" onclick="birdview.init({stiffness: 40}); birdview.toggle();">Stiffness = 40</button>
+                    <button class="options_button set" onclick="birdview.init({stiffness: 3000}); birdview.toggle();">Stiffness = 3000</button>
+                    <button class="options_button reset">Reset</button>
+                    </span>
+                </li>
+                <li>
+                    <span>
+                    <code>overlay_transition</code>: <i>Number</i><br>
+                    How long the overlay takes to fade in when Birdview turns on, and to fade out when it turns off, in seconds. Default value is <i>0.3</i>.<br>
+                    <button class="options_button set" onclick="birdview.init({overlay_transition: 0}); birdview.toggle();">No fade</button>
+                    <button class="options_button set" onclick="birdview.init({overlay_transition: 1}); birdview.toggle();">1 second</button>
+                    <button class="options_button reset">Reset</button>
+                    </span>
+                </li>
+                <li>
+                    <span>
+                    <code>origin_X</code>: <i>Number</i><br>
+                    Where the zoomed page sits across the window, in percentage: <i>0</i> on the left, <i>50</i> in the center, <i>100</i> on the right. Default value is <i>50</i>. Set to the appropriate value on documents that are not horizontally centered.<br>
+                    <button class="options_button set" onclick="birdview.init({origin_X: 0}); birdview.toggle();">Origin X = 0%</button>
+                    <button class="options_button set" onclick="birdview.init({origin_X: 100}); birdview.toggle();">Origin X = 100%</button>
+                    <button class="options_button reset">Reset</button>
+                    </span>
+                </li>
+                <li>
+                    <span>
+                    <code>zoom_when_fits</code>: <i>Number</i><br>
+                    How far to zoom out when the page already fits in the window. Default value is <i>0.9</i>, for 90%.
+                    </span>
+                </li>
+            </ul>
+
+            <h4 id="callbacks">3. Callbacks</h4>
+            <ul>
+                <li>
+                    <span><code>callback_start</code>: <i>Function</i><br>
+                    Calls a function when Birdview turns on, as the page starts zooming out.</span>
+                </li>
+                <li>
+                    <span><code>callback_end</code>: <i>Function</i><br>
+                    Calls a function once the page is back to normal, zoomed back in. Turning Birdview on again before that counts as the same stay, so the two calls always come in pairs.</span>
+                </li>
+            </ul>
+            <p>
+                In Birdview, the whole page is on screen at once. Everything a page loads or plays only when it scrolls into view, such as lazy videos, would start all at once. Use the callbacks to hold that work while Birdview is on, and resume it after. For example, a page of videos can pause loading:
+            </p>
+<pre><code>birdview.init({
+    callback_start: function(){ pauseLoading = true; },
+    callback_end: function(){ pauseLoading = false; }
+});</code></pre>
+        </section>
+
+<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - HOW IT WORKS -->
+        
+        <section id="how-it-works">
+            <h3><a href="#how-it-works">How it works</a></h3>
+            <p>
+                Birdview.js leaves your page as it is until you turn it on. Then it scales the <code>body</code> with a CSS transform, so the whole document, its full width and height, margins included, fits inside the window. When you turn it off, the transform is removed, so the page is back exactly as it was.
+            </p>
+            <p>
+                The zoom starts from where you are: the part of the page you were looking at shrinks into its place in the overview. Clicking or tapping a place dives into it, keeping that place under your finger.
+            </p>
+            <p>
+                While Birdview is on, it watches the page and the window. If the content changes, for example when filtering a list, or if the window is resized or the phone rotated, Birdview zooms again on the new content.
+            </p>
+            <p>
+                Elements with <code>position: fixed</code> are a frame of the window. In Birdview, that frame stays on the page where the window was, and zooms out with it. A transform on an ancestor normally makes fixed elements lose their place: see <a href="/blog/position-fixed-and-css-transforms/">Position fixed and CSS transforms</a>. Birdview puts them back where they were seen.
+            </p>
+            <p>
+                The overlay is added outside the <code>body</code>, so it is never scaled, and it takes the page's font.
+            </p>
+        </section>
+
+<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ISSUES -->
+
+        <section id="issues">
+            <h3><a href="#issues">Known issues</a></h3>
+            <ul>
+                <li>
+                    Birdview tries its best to not interfere with pinch to zoom on touch devices. A pinch triggers Birdview only if the page is at 1:1 scale.
+                    If the user zooms in, then the page is no longer at 1:1 and a pinch would bring the page back to 1:1 without triggering Birdview.
+                    This works well on Mobile Safari and Firefox for Android, but not on Chrome for Android.
+                    I did not find a way to detect a user-initiated page zoom on Chrome for Android.
+                    Therefore, if the user pinches out to zoom then pinches back in, it will will trigger Birdview instead of getting the page back to 1:1.
+                    In order to get back to the initial scale, the user must pinch out some more then, without lifting the fingers, pinch in until the page is at 1:1 scale.
+                </li>
+                <li>Birdview zooms the document. On pages where the content scrolls inside an inner element, as in many web apps, it shows that element as one window-sized box.</li>
+            </ul>
+            <p>
+                Birdview.js is tested on:
+            </p>
+            <ul>
+                <li><strong>Desktop</strong>: Google Chrome, Mozilla Firefox, and Microsoft Edge on Windows 10.</li>
+                <li><strong>Mobile</strong>: Mobile Safari, Chrome and Firefox for Android.</li>
+            </ul>
+        </section>
+
+<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - LINKS -->
+
+        <section id="links">
+            <h3><a href="#links">Links</a></h3>
+            <ul>
+                <li><a href="https://github.com/jesstelford/birdview-chrome-extension">Birdview Chrome extension</a> <span class="warning">(outdated)</span>: Kudos to <a href="https://twitter.com/jesstelford">Jess Telford</a> for making a Google Chrome browser extension.</li>
+                <li><a href="/birdview/prototype/">Birdview early prototype</a>: Early Birdview prototype back from February 2012! The idea was that when you land on a webpage, you scroll through an overview of the document before diving in.</li>
+                <li><a href="https://jonikorpi.com/">Joni Korpi</a>: Joni Korpi zoomable UI website. His experiment was one motivation to finish work on Birdview.</li>
+                <li><a href="https://gomakethings.com/the-anatomy-of-a-vanilla-javascript-plugin/">Anatomy of a Javascript plugin</a>: very good reference by <a href="https://twitter.com/ChrisFerdinandi">@ChrisFerdinandi</a> on how to structure a Javascript plugin.</li>
+            </ul>
+        </section>
+
+<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - LICENSE -->
+
+        <section id="license">
+            <h3><a href="#license">License</a></h3>
+            <p>Birdview.js is published under the <a href="https://www.gnu.org/licenses/gpl-3.0.en.html">GNU General Public License</a>.</p>
+        </section>
+
+    </article><!-- END MAIN -->
+
+    <footer id="footer">
+        <span>Published <time datetime="2017-05-20T20:55">20&nbsp;May&nbsp;2017</time></span>
+        <span><a href="/">Achraf Kassioui</a></span>
+        <span><a href="https://twitter.com/achrafkassioui">Twitter</a></span>
+    </footer>
+
+    <script type="text/javascript" src="/birdview/birdview.js"></script>
+    <script type="text/javascript">
+        window.addEventListener('load', function() {
+            /**
+            *
+            * Birdview
+            *
+            */
+            birdview.init();
+
+            /**
+            *
+            * Birdview options playground
+            *
+            */
+            (function(){
+                var set_buttons = document.querySelectorAll('#options .set');
+                var reset_buttons = document.querySelectorAll('#options .reset');
+
+                for (var i = set_buttons.length - 1; i >= 0; i--) {
+                    set_buttons[i].addEventListener('click', setActive);
+                }
+
+                for (var i = reset_buttons.length - 1; i >= 0; i--) {
+                    reset_buttons[i].addEventListener('click', reset);
+                }
+
+                function setActive(e){
+                    removeActive();
+                    var target = e.target;
+                    if(!target.classList.contains('active')) target.classList.add('active');
+                    var siblings = getSiblings(target);
+                    for (var i = siblings.length - 1; i >= 0; i--) {
+                        if(siblings[i].classList.contains('reset')) siblings[i].classList.add('active');
+                    }
+                }
+
+                function removeActive(){
+                    for (var i = set_buttons.length - 1; i >= 0; i--) {
+                        if(set_buttons[i].classList.contains('active')) set_buttons[i].classList.remove('active');
+                    }
+                    for (var i = reset_buttons.length - 1; i >= 0; i--) {
+                        if(reset_buttons[i].classList.contains('active')) reset_buttons[i].classList.remove('active');
+                    }
+                }
+
+                function reset(){
+                    birdview.init();
+                    removeActive();
+                }
+
+                function getSiblings(element){
+                    var siblings = [];
+                    var sibling = element.parentNode.firstChild;
+                    var skipMe = element;
+                    for (; sibling; sibling = sibling.nextSibling) 
+                        if (sibling.nodeType == 1 && sibling != element)
+                            siblings.push(sibling);
+                    return siblings;
+                }
+            })();
+        });
+    </script>
+    <script type="text/javascript" src="/js/google-analytics.js"></script>
+</body>
+</html>
