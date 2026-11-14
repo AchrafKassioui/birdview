@@ -6,18 +6,6 @@
 
 Get a glance at a whole web page with an aerial view.
 
-## Setup
-
-Include `birdview.js` and `birdview.css`, then turn Birdview on:
-
-```html
-<link rel="stylesheet" href="birdview.css">
-<script src="birdview.js"></script>
-<script>birdview.init();</script>
-```
-
-Then press Z, or pinch in on a touch device, to zoom out. Click or tap anywhere to dive back in.
-
 ## Demo & Documentation
 
 Visit [**achrafkassioui.com/birdview**](https://www.achrafkassioui.com/birdview/).
