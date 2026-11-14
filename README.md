@@ -24,14 +24,16 @@ Visit [**achrafkassioui.com/birdview**](https://www.achrafkassioui.com/birdview/
 
 ## Change Log
 
-### 2.0 – 13 Nov 2026
+### 2.0 – 14 Nov 2026
+
+This is a major update with a lot of fixes and improvements.
 
 - Birdview no longer wraps the page in its own elements. It leaves the page as it is until it's turned on, then scales the `body`.
-- Birdview updates automatically whenever the window changes or the document content changes.
+- Birdview updates automatically whenever the window resizes, the device rotates, or the document content changes.
+- Zoom is now spring-based instead of easing-based. The `speed` and `easing` settings are replaced by `stiffness`.
 - A top margin on the first element no longer offsets the zoom, and pages wider than the window fit too.
 - Birdview always zooms: a page that already fits is zoomed to 90% and centered (new setting `zoom_when_fits`). The "page fits" bounce animation is gone.
 - Elements with `position: fixed` stay on the zoomed page where the window was, and zoom out with it.
-- Zoom is now spring based instead of transition based. The `speed` and `easing` settings are replaced by `stiffness`.
 - `callback_end` now runs once the page is back to normal, zoomed back in, and the callbacks always come in pairs.
 - The keyboard shortcut ignores Cmd, Ctrl, Alt and Shift, held keys, and typing in fields.
 
