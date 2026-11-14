@@ -24,7 +24,7 @@ Visit [**achrafkassioui.com/birdview**](https://www.achrafkassioui.com/birdview/
 
 ## Change Log
 
-### 2.0 – 14 Nov 2026
+### 2.0
 
 This is a major update with a lot of fixes and improvements.
 
@@ -37,9 +37,11 @@ This is a major update with a lot of fixes and improvements.
 - `callback_end` now runs once the page is back to normal, zoomed back in, and the callbacks always come in pairs.
 - The keyboard shortcut ignores Cmd, Ctrl, Alt and Shift, held keys, and typing in fields.
 
-### 1.6 – 1 Oct 2026
+### 1.6
 
 - `birdview.css` update.
+
+------
 
 ### 11 May 2019
 
