@@ -53,6 +53,9 @@ img{border-style: none;} /* Removes borders around images on Internet Explorer *
 }
 
 #title{
+    position: relative;
+    /* Room for the Birdview button above the title */
+    padding-top: 20px;
     padding-bottom: 20em;
     background-color: #02c6ed;
     background-repeat: no-repeat;
@@ -106,32 +109,72 @@ img{border-style: none;} /* Removes borders around images on Internet Explorer *
     cursor: pointer;
 }
 
-#birdview_button{
-    font-weight: 700;
-}
-
-#birdview_button{
-    display: block;
-    width: 7em;
-    height: 2em;
-    margin: auto;
+/* Hint: a drawn arrow from the tagline to the Birdview button */
+.birdview_hint{
+    position: absolute;
+    /* The tip sits under the button's center, 47px from the right edge */
+    top: 38px;
+    right: 17px;
+    width: 280px;
+    height: 220px;
+    margin: 0;
+    padding: 0;
     color: #fff;
-    text-align: center;
-    font-family: inherit;
-    font-weight: 700;
-    font-size: 1.5em;
-    background: #01d1fb;
+    background: none;
     border: none;
-    border-radius: 6px;
-    box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.1);
     cursor: pointer;
 }
 
-#birdview_button:hover,
-#birdview_button:active{
-    padding: 0;
-    color: #02c6ed;
-    background: #fff;
+.birdview_hint span{
+    position: absolute;
+    right: calc(100% - 8px);
+    bottom: 2px;
+    white-space: nowrap;
+    font-family: 'Bradley Hand', 'Segoe Print', 'Comic Sans MS', cursive;
+    font-weight: 700;
+    font-size: 22px;
+    transform: rotate(-8deg);
+}
+
+.birdview_hint svg{
+    display: block;
+    width: 100%;
+    height: 100%;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 3px;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+}
+
+.birdview_hint svg path{
+    vector-effect: non-scaling-stroke;
+}
+
+.birdview_hint .tall{
+    display: none;
+}
+
+.birdview_hint:hover,
+.birdview_hint:active{
+    color: #000;
+}
+
+/* Fades out over the first 80px of scroll, since the button stays and the arrow doesn't */
+@supports (animation-timeline: scroll()){
+    .birdview_hint{
+        animation: birdview_hint_fade linear both;
+        animation-timeline: scroll(root);
+        animation-range: 0 80px;
+    }
+}
+
+@keyframes birdview_hint_fade{
+    to{
+        opacity: 0;
+        pointer-events: none;
+    }
 }
 
 /*************************************************************************************
@@ -433,6 +476,24 @@ strong{
         background-size: 800px 300px;
     }
 
+    .birdview_hint{
+        right: 15px;
+        width: 80px;
+        height: 160px;
+    }
+
+    .birdview_hint .arc{
+        display: none;
+    }
+
+    .birdview_hint .tall{
+        display: block;
+    }
+
+    .birdview_hint span{
+        font-size: 18px;
+    }
+
     #features{
         flex-flow: column;
     }
@@ -471,6 +532,12 @@ strong{
 }
 
 @media screen and (max-width: 540px){
+    .birdview_hint{
+        right: 7px;
+        width: 100px;
+        height: 210px;
+    }
+
     #features div{
         margin: auto;
     }

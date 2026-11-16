@@ -1,7 +1,7 @@
 /*
 *
 * Birdview.css
-* 2.1
+* 2.2
 * 16 Nov 2026
 *
 * www.achrafkassioui.com/birdview/
@@ -10,10 +10,11 @@
 
 /****************************************************
 *
-* Birdview's own elements start from the browser's defaults, so the page's styles for buttons, titles, links or text never reach them.
-* The rules below then give them Birdview's look.
+* Reset
 *
 ****************************************************/
+
+/* Page styles never reach Birdview's elements */
 
 #birdview_auto_generated_button,
 #birdview_auto_generated_overlay,
@@ -25,9 +26,18 @@
 *
 * Button
 *
-* Fixed in the window's top right corner, so it stays reachable and never moves the page. While Birdview is on, it zooms out with the page.
-*
 ****************************************************/
+
+:root{
+    --birdview-button-text: rgba(0, 0, 0, 0.6);
+    --birdview-button-tint: rgba(255, 255, 255, 0.5);
+    --birdview-button-border: rgba(0, 0, 0, 0.1);
+    --birdview-button-blur: 10px;
+    /* Over dark content */
+    --birdview-button-dark-text: rgba(255, 255, 255, 0.7);
+    --birdview-button-dark-tint: rgba(255, 255, 255, 0.08);
+    --birdview-button-dark-border: rgba(255, 255, 255, 0.15);
+}
 
 #birdview_auto_generated_button{
     position: fixed;
@@ -39,31 +49,40 @@
     margin: 0;
     padding: 0 8px;
     text-align: center;
-    color: rgba(0, 0, 0, 0.4);
+    color: var(--birdview-button-text);
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Oxygen-Sans, Ubuntu, Cantarell, sans-serif;
     font-style: normal;
     font-weight: 500;
     font-size: 16px;
     line-height: 1;
-    background: rgba(0, 0, 0, 0.05);
-    border: 1px solid rgba(0, 0, 0, 0.1);
+    background: var(--birdview-button-tint);
+    /* Lets the page color the border */
+    background-clip: padding-box;
+    border: 1px solid var(--birdview-button-border);
     border-radius: 4px;
+    -webkit-backdrop-filter: blur(var(--birdview-button-blur));
+    backdrop-filter: blur(var(--birdview-button-blur));
     -webkit-appearance: none;
     appearance: none;
     cursor: pointer;
-    /* Under the overlay, which covers it while Birdview is on */
     z-index: 999;
 }
 
-/* Pseudo element to extend the target area */
+/* Larger touch target */
 #birdview_auto_generated_button:after{
     position: absolute;
     content: '';
-    /* Full parent width + parent's right margin + parent's borders width */
     width: calc(100% + 6px + 2px);
     height: 44px;
     left: -1px;
     bottom: -9px;
+}
+
+/* Over dark content, see adaptive_button */
+#birdview_auto_generated_button.birdview_on_dark{
+    color: var(--birdview-button-dark-text);
+    background: var(--birdview-button-dark-tint);
+    border-color: var(--birdview-button-dark-border);
 }
 
 #birdview_auto_generated_button:active{
@@ -71,7 +90,7 @@
     background: #01d1fb;
 }
 
-/* Only where a pointer hovers. On a touch screen, the hover would stay after a tap, and color whatever is now under the finger. */
+/* Hover only with a pointer, so it doesn't stick after a tap */
 @media (hover: hover){
     #birdview_auto_generated_button:hover{
         color: #fff;
@@ -88,25 +107,18 @@
 #birdview_auto_generated_overlay{
     visibility: hidden;
     position: fixed;
-    /*
-    * Kept off the window's edges by the margin setting, where the zoomed page fits too.
-    * Safari on iPhone then keeps tinting its toolbars with the page, instead of switching to the overlay's color in one step.
-    */
+    /* The margin setting */
     top: var(--birdview-margin, 8px);
     right: var(--birdview-margin, 8px);
     bottom: var(--birdview-margin, 8px);
     left: var(--birdview-margin, 8px);
-    /* One radius for every margin, smaller only when the margin is: with no margin, square corners */
     border-radius: min(var(--birdview-radius, 8px), var(--birdview-margin, 8px));
     color: #fff;
-    /* The page can set its own font on the overlay, with its ID */
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Oxygen-Sans, Ubuntu, Cantarell, sans-serif;
     font-style: normal;
     font-size: 20px;
     background: rgba(0, 0, 0, var(--birdview-darkness, 0.4));
-    /* Space between the overlay's edges and its content: the title, the cross, the links and the help */
     --birdview-inset: 16px;
-    /* How wide the cross is drawn */
     --birdview-cross: 32px;
     overflow: hidden;
     z-index: 1000;
@@ -117,7 +129,7 @@
     opacity: 0;
 }
 
-/* Fades in, and fades out while the page zooms back in. Turned on again mid-fade, it fades back from where it is. */
+/* Visible */
 #birdview_auto_generated_overlay.show{
     visibility: visible;
     opacity: 1;
@@ -125,11 +137,11 @@
     pointer-events: auto;
     user-select: auto;
     -moz-user-select: auto;
-    /* A finger can scroll, so a swipe dives and scrolls on in one gesture, but it can't pinch the browser's own zoom. */
+    /* Scrolling yes, browser zoom no */
     touch-action: pan-x pan-y;
 }
 
-/* Hidden only once the fade ends */
+/* Fading out */
 #birdview_auto_generated_overlay.show.fading{
     visibility: hidden;
     opacity: 0;
@@ -141,14 +153,11 @@
 *
 * Overlay title
 *
-* The title on the left, the close button on the right, both centered on the same line.
-*
 */
 #birdview_auto_generated_overlay .birdview_header{
     display: flex;
     align-items: center;
     justify-content: space-between;
-    /* The capitals' top sits the inset away from the overlay's top, like the title's left edge from its left */
     margin: var(--birdview-inset) 0 4px var(--birdview-inset);
 }
 
@@ -161,10 +170,7 @@
     font-weight: 500;
     font-size: 48px;
     line-height: 1;
-    /*
-    * The box is trimmed to the letters, from the top of the capitals to the baseline, whatever the font.
-    * Centered in the row, the cross then lines up with the middle of the capitals.
-    */
+    /* Trims the box to the capitals, so the cross centers on them */
     text-box: trim-both cap alphabetic;
 }
 
@@ -194,7 +200,7 @@
     border: none;
 }
 
-/* The text of the first link lines up with the title */
+/* Aligned with the title */
 #birdview_auto_generated_overlay a:first-of-type{
     margin-left: calc(var(--birdview-inset) - 4px);
 }
@@ -215,12 +221,7 @@
 * Close button
 *
 */
-/*
-* Always a 60 by 60 pixel target, with the cross centered in it, and the cross centered on the title.
-* Its negative top and bottom margins keep it from making the row taller than the title.
-* Its right margin puts the cross's drawn edge the inset away from the overlay's right edge, or as close as the 60 pixel target allows inside the overlay.
-* The cross's lines fill 13/16 of its width.
-*/
+/* A 60px target. The cross's lines fill 13/16 of its width */
 #birdview_auto_generated_overlay button{
     flex: none;
     width: 60px;
@@ -231,7 +232,7 @@
     border: none;
     -webkit-appearance: none;
     appearance: none;
-    /* The cross is a mask over the button's color, so only the cross is painted, and only its color changes */
+    /* The cross is a mask */
     background: #fff;
     -webkit-mask: no-repeat center / var(--birdview-cross) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M4 4L20 20M20 4L4 20' stroke='black' stroke-width='3.5' stroke-linecap='round'/%3E%3C/svg%3E");
     mask: no-repeat center / var(--birdview-cross) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M4 4L20 20M20 4L4 20' stroke='black' stroke-width='3.5' stroke-linecap='round'/%3E%3C/svg%3E");
@@ -254,7 +255,7 @@
 *
 */
 #birdview_auto_generated_overlay span{
-    /* Placed in the overlay, not fixed in the window on its own, so Safari on iPhone doesn't take it as a bar at the window's bottom edge to tint its toolbar with */
+    /* Not fixed, so Safari doesn't tint its toolbar with it */
     position: absolute;
     left: 0;
     bottom: 0;

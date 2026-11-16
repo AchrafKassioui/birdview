@@ -12,6 +12,10 @@ Visit [**achrafkassioui.com/birdview**](https://www.achrafkassioui.com/birdview/
 
 ## Change Log
 
+### 2.2.0
+
+- New `adaptive_button` setting: the button turns light-on-dark over dark content. On by default.
+
 ### 2.1.1
 
 - Improved pinch on touch devices. Pinching out always uses the browser's zoom. Pinching in triggers Birdview only when the gesture starts on a page at its normal 1:1 scale.

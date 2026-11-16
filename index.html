@@ -16,7 +16,20 @@
             <h1><a href="">Birdview.js</a></h1>
             <h2>UI&nbsp;experiment &amp;&nbsp;Javascript&nbsp;plugin</h2>
             <p id="gist" class="birdview_toggle">Get a glance at a whole web&nbsp;page with&nbsp;an&nbsp;aerial&nbsp;view</p>
-            <button class="birdview_toggle" id="birdview_button">demo</button>
+            <!-- Hint pointing at the Birdview button -->
+            <button class="birdview_toggle birdview_hint" type="button" aria-label="Try Birdview">
+                <span>Try it</span>
+                <!-- Wide screens: a long arc -->
+                <svg class="arc" viewBox="0 0 280 200" aria-hidden="true" preserveAspectRatio="none">
+                    <path d="M10 180 C 90 186, 170 160, 210 110 S 244 40, 250 6"/>
+                    <path d="M238 17 C 242 13, 246 9, 250 5 C 252 10, 254 15, 257 20"/>
+                </svg>
+                <!-- Middle and narrow screens: a tall arrow beside the header -->
+                <svg class="tall" viewBox="0 0 100 200" aria-hidden="true" preserveAspectRatio="none">
+                    <path d="M8 190 C 40 192, 80 170, 84 120 C 87 75, 72 35, 60 6"/>
+                    <path d="M57 20 C 58 15, 59 10, 60 5 C 64 7, 68 10, 73 13"/>
+                </svg>
+            </button>
         </section>
 
 <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - FEATURES -->
@@ -132,11 +145,12 @@
     button: true,
     button_text: 'Birdview',
     overlay: true,
-    overlay_transition: 0.3,
     margin: 8,
     stiffness: 700,
+    overlay_transition: 0.3,
     origin_X: 50,
     fade_fixed: true,
+    adaptive_button: true,
     callback_start: function(){},
     callback_end: function(){}
 });</code></pre>
@@ -171,15 +185,6 @@
                 </li>
                 <li>
                     <span>
-                    <code>overlay_transition</code>: <i>Number</i><br>
-                    How long the overlay takes to fade in when Birdview turns on, and to fade out when it turns off, in seconds. Default value is <i>0.3</i>.<br>
-                    <button class="options_button set" onclick="birdview.init({overlay_transition: 0}); birdview.toggle();">No fade</button>
-                    <button class="options_button set" onclick="birdview.init({overlay_transition: 1}); birdview.toggle();">1 second</button>
-                    <button class="options_button reset">Reset</button>
-                    </span>
-                </li>
-                <li>
-                    <span>
                     <code>margin</code>: <i>Number</i><br>
                     Space between the window's edges and the overlay, in pixels. In Birdview, the page shrinks to fit inside the overlay. Default value is <i>8</i>.<br>
                     <button class="options_button set" onclick="birdview.init({margin: 0}); birdview.toggle();">Margin = 0</button>
@@ -203,6 +208,15 @@
                 </li>
                 <li>
                     <span>
+                    <code>overlay_transition</code>: <i>Number</i><br>
+                    How long the overlay takes to fade in when Birdview turns on, and to fade out when it turns off, in seconds. Default value is <i>0.3</i>.<br>
+                    <button class="options_button set" onclick="birdview.init({overlay_transition: 0}); birdview.toggle();">No fade</button>
+                    <button class="options_button set" onclick="birdview.init({overlay_transition: 1}); birdview.toggle();">1 second</button>
+                    <button class="options_button reset">Reset</button>
+                    </span>
+                </li>
+                <li>
+                    <span>
                     <code>origin_X</code>: <i>Number</i><br>
                     Where the zoomed page sits across the overlay, in percentage: <i>0</i> on the left, <i>50</i> in the center, <i>100</i> on the right. Default value is <i>50</i>. Set to the appropriate value on documents that are not horizontally centered.<br>
                     <button class="options_button set" onclick="birdview.init({origin_X: 0}); birdview.toggle();">Origin X = 0%</button>
@@ -216,6 +230,13 @@
                     Fades out elements with <code>position: fixed</code> while Birdview is on, and back in once the page is back to normal. It takes as long as the overlay's fade. Default value is <i>true</i>. With <i>false</i>, they stay visible where the browser places them on the zoomed page.<br>
                     <button class="options_button set" onclick="birdview.init({fade_fixed: false}); birdview.toggle();">Disable Fade Fixed</button>
                     <button class="options_button reset">Reset</button>
+                    </span>
+                </li>
+                <li>
+                    <span>
+                    <code>adaptive_button</code>: <i>Boolean</i><br>
+                    Gives the button a light-on-dark look while the content under it is dark. Default value is <i>true</i>.<br>
+                    The button's colors and blur are CSS variables in <code>birdview.css</code>, such as <code>--birdview-button-tint</code> and <code>--birdview-button-dark-tint</code>. Set them on <code>:root</code> to fit your page.
                     </span>
                 </li>
             </ul>
@@ -266,25 +287,12 @@
 
 <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ISSUES -->
 
-        <section id="issues">
-            <h3><a href="#issues">Known issues</a></h3>
+        <section id="compatibility">
+            <h3><a href="#compatibility">Compatibility</a></h3>
+            <p>Birdview.js is tested on:</p>
             <ul>
-                <li>
-                    Birdview tries its best to not interfere with pinch to zoom on touch devices. A pinch triggers Birdview only if the page is at 1:1 scale.
-                    If the user zooms in, then the page is no longer at 1:1 and a pinch would bring the page back to 1:1 without triggering Birdview.
-                    This works well on Mobile Safari and Firefox for Android, but not on Chrome for Android.
-                    I did not find a way to detect a user-initiated page zoom on Chrome for Android.
-                    Therefore, if the user pinches out to zoom then pinches back in, it will will trigger Birdview instead of getting the page back to 1:1.
-                    In order to get back to the initial scale, the user must pinch out some more then, without lifting the fingers, pinch in until the page is at 1:1 scale.
-                </li>
-                <li>Birdview zooms the document. On pages where the content scrolls inside an inner element, as in many web apps, it shows that element as one window-sized box.</li>
-            </ul>
-            <p>
-                Birdview.js is tested on:
-            </p>
-            <ul>
-                <li><strong>Desktop</strong>: Google Chrome, Mozilla Firefox, and Microsoft Edge on Windows 10.</li>
-                <li><strong>Mobile</strong>: Mobile Safari, Chrome and Firefox for Android.</li>
+                <li><strong>Mac</strong>: Safari and Google Chrome.</li>
+                <li><strong>iPhone and iPad</strong>: Safari.</li>
             </ul>
         </section>
 
