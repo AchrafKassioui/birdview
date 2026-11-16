@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////////////////
 //
 // Birdview.js
-// 2.1
+// 2.1.1
 // Current version: 16 Nov 2026
 // First version: 20 May 2017
 //
@@ -102,6 +102,8 @@
         startX: 0,
         startY: 0,
         startSpan: 0,
+        pinch: null,
+        zoomed: false,
         count: 0,
         // When the finger touched the page. A touch that began before Birdview turned on isn't a touch in Birdview.
         began: 0,
@@ -742,6 +744,7 @@
         zoomed_for = sizes();
         zoomed_for_window = windowSizes();
         holdScrollPosition();
+        var moving = spring.animations.length > 0;
         sync();
         if(window_changed){
             var zoom = birdviewZoom();
@@ -750,6 +753,8 @@
             spring.target = copy(spring.now);
             zoom_scroll = { x: window.scrollX, y: window.scrollY };
             render();
+            // A zoom cut short here has arrived: it settles, so the overlay shows its menu, as when Safari's toolbar shrinks during the zoom.
+            if(moving) settle();
             return;
         }
         var centered = birdviewZoom(spring.now.scale);
@@ -849,6 +854,9 @@
             touch.startX = e.touches[0].clientX;
             touch.startY = e.touches[0].clientY;
             touch.count = e.touches.length;
+            touch.pinch = null;
+            // A gesture that starts on a page zoomed in by the browser belongs to the browser to its end, even as it comes back to 1:1
+            touch.zoomed = !atNativeScale();
 
             // With two touches, memorize the distance between them to detect pinching
             if(e.touches.length === 2){
@@ -888,33 +896,35 @@
             /*
             *
             * A pinch in should trigger Birdview, without breaking the native pinch to zoom:
-            * only proceed if the page is at 1:1.
+            * only proceed if the page is at 1:1, and was at 1:1 when the gesture started.
             *
             */
-            if(!atNativeScale()) return;
+            if(touch.zoomed || !atNativeScale()) return;
 
-            // If the touch started with two points and still has two, test for the pinch gesture
+            /*
+            *
+            * If the touch started with two points and still has two, test for the pinch gesture.
+            * The direction is decided once the fingers moved 4 pixels apart or together, and kept for the whole gesture.
+            * Only a pinch in is taken from the browser. A pinch out stays the browser's native zoom.
+            *
+            */
             if(e.touches.length === 2 && touch.count === 2){
                 var currentSpan = distanceBetween({
                     x: e.touches[1].clientX,
                     y: e.touches[1].clientY
                 },{
-                    x: touch.startX,
-                    y: touch.startY
+                    x: e.touches[0].clientX,
+                    y: e.touches[0].clientY
                 });
+                var change = currentSpan - touch.startSpan;
+                if(!touch.pinch && Math.abs(change) > 4) touch.pinch = change < 0 ? 'in' : 'out';
 
-                // Pinching in: disable the default browser behavior
-                if(currentSpan <= touch.startSpan){
+                // Past 30 pixels: pinching in turns Birdview on. Pinching out in Birdview dives into the midpoint between the two touches
+                if(touch.pinch === 'in'){
                     e.preventDefault();
-                }
-
-                // Past 30 pixels: pinching in turns Birdview on. Pinching out dives into the midpoint between the two touches
-                if(Math.abs(touch.startSpan - currentSpan) > 30){
-                    if(currentSpan < touch.startSpan){
-                        enterBirdview();
-                    }else{
-                        dive((touch.startX + e.touches[1].clientX) * 0.5, (touch.startY + e.touches[1].clientY) * 0.5);
-                    }
+                    if(change < -30) enterBirdview();
+                }else if(touch.pinch === 'out' && change > 30){
+                    dive((e.touches[0].clientX + e.touches[1].clientX) * 0.5, (e.touches[0].clientY + e.touches[1].clientY) * 0.5);
                 }
             }
         }
