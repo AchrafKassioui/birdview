@@ -27,15 +27,6 @@ a, label, button, input{-webkit-tap-highlight-color: rgba(0, 0, 0, 0);}
 a{text-decoration-skip: ink;}
 img{border-style: none;} /* Removes borders around images on Internet Explorer */
 
-:focus{
-    outline: solid 4px #222;
-    outline-offset: 2px;
-}
-
-button::-moz-focus-inner{
-    border: 0;
-}
-
 /*************************************************************************************
 *
 * Typography
@@ -141,7 +132,6 @@ button::-moz-focus-inner{
     padding: 0;
     color: #02c6ed;
     background: #fff;
-    outline: none;
 }
 
 /*************************************************************************************
@@ -394,12 +384,12 @@ strong{
 }
 
 .set{background: #02c6ed;}
-.set:active{background: #01d1fb; outline: none;}
+.set:active{background: #01d1fb;}
 .set:focus{background: #01d1fb;}
 .set.active{background: #1ac53e;}
 
 .reset{color: #fff; background: #eee;}
-.reset:active{background: #f00; outline: none;}
+.reset:active{background: #f00;}
 .reset:focus{background: #f00;}
 .reset.active{color: #fff; background: #f00;}
 

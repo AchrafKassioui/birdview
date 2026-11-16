@@ -44,7 +44,7 @@
         <section id="download">
             <h3><a href="/" rel="author">Achraf Kassioui</a></h3>
 
-            <p>Updated <time datetime="2026-11-13">13 Nov 2026</time>. <a href="https://github.com/AchrafKassioui/birdview#change-log">Change&nbsp;log</a></p>
+            <p>Updated <time datetime="2026-11-16">16 Nov 2026</time>. <a href="https://github.com/AchrafKassioui/birdview#change-log">Change&nbsp;log</a></p>
 
             <a class="download_button" href="birdview.js">birdview.js</a>
             <a class="download_button" href="birdview.css">birdview.css</a>
@@ -131,11 +131,12 @@
     shortcut: 90,
     button: true,
     button_text: 'Birdview',
-    stiffness: 700,
-    overlay_transition: 0.3,
     overlay: true,
+    overlay_transition: 0.3,
+    margin: 8,
+    stiffness: 700,
     origin_X: 50,
-    zoom_when_fits: 0.9,
+    fade_fixed: true,
     callback_start: function(){},
     callback_end: function(){}
 });</code></pre>
@@ -168,6 +169,24 @@
                     <button class="options_button reset">Reset</button>
                     </span>
                 </li>
+                <li>
+                    <span>
+                    <code>overlay_transition</code>: <i>Number</i><br>
+                    How long the overlay takes to fade in when Birdview turns on, and to fade out when it turns off, in seconds. Default value is <i>0.3</i>.<br>
+                    <button class="options_button set" onclick="birdview.init({overlay_transition: 0}); birdview.toggle();">No fade</button>
+                    <button class="options_button set" onclick="birdview.init({overlay_transition: 1}); birdview.toggle();">1 second</button>
+                    <button class="options_button reset">Reset</button>
+                    </span>
+                </li>
+                <li>
+                    <span>
+                    <code>margin</code>: <i>Number</i><br>
+                    Space between the window's edges and the overlay, in pixels. In Birdview, the page shrinks to fit inside the overlay. Default value is <i>8</i>.<br>
+                    <button class="options_button set" onclick="birdview.init({margin: 0}); birdview.toggle();">Margin = 0</button>
+                    <button class="options_button set" onclick="birdview.init({margin: 40}); birdview.toggle();">Margin = 40</button>
+                    <button class="options_button reset">Reset</button>
+                    </span>
+                </li>
             </ul>
 
             <h4 id="effects">2. Effects</h4>
@@ -184,17 +203,8 @@
                 </li>
                 <li>
                     <span>
-                    <code>overlay_transition</code>: <i>Number</i><br>
-                    How long the overlay takes to fade in when Birdview turns on, and to fade out when it turns off, in seconds. Default value is <i>0.3</i>.<br>
-                    <button class="options_button set" onclick="birdview.init({overlay_transition: 0}); birdview.toggle();">No fade</button>
-                    <button class="options_button set" onclick="birdview.init({overlay_transition: 1}); birdview.toggle();">1 second</button>
-                    <button class="options_button reset">Reset</button>
-                    </span>
-                </li>
-                <li>
-                    <span>
                     <code>origin_X</code>: <i>Number</i><br>
-                    Where the zoomed page sits across the window, in percentage: <i>0</i> on the left, <i>50</i> in the center, <i>100</i> on the right. Default value is <i>50</i>. Set to the appropriate value on documents that are not horizontally centered.<br>
+                    Where the zoomed page sits across the overlay, in percentage: <i>0</i> on the left, <i>50</i> in the center, <i>100</i> on the right. Default value is <i>50</i>. Set to the appropriate value on documents that are not horizontally centered.<br>
                     <button class="options_button set" onclick="birdview.init({origin_X: 0}); birdview.toggle();">Origin X = 0%</button>
                     <button class="options_button set" onclick="birdview.init({origin_X: 100}); birdview.toggle();">Origin X = 100%</button>
                     <button class="options_button reset">Reset</button>
@@ -202,8 +212,10 @@
                 </li>
                 <li>
                     <span>
-                    <code>zoom_when_fits</code>: <i>Number</i><br>
-                    How far to zoom out when the page already fits in the window. Default value is <i>0.9</i>, for 90%.
+                    <code>fade_fixed</code>: <i>Boolean</i><br>
+                    Fades out elements with <code>position: fixed</code> while Birdview is on, and back in once the page is back to normal. It takes as long as the overlay's fade. Default value is <i>true</i>. With <i>false</i>, they stay visible where the browser places them on the zoomed page.<br>
+                    <button class="options_button set" onclick="birdview.init({fade_fixed: false}); birdview.toggle();">Disable Fade Fixed</button>
+                    <button class="options_button reset">Reset</button>
                     </span>
                 </li>
             </ul>
@@ -233,7 +245,7 @@
         <section id="how-it-works">
             <h3><a href="#how-it-works">How it works</a></h3>
             <p>
-                Birdview.js leaves your page as it is until you turn it on. Then it scales the <code>body</code> with a CSS transform, so the whole document, its full width and height, margins included, fits inside the window. When you turn it off, the transform is removed, so the page is back exactly as it was.
+                Birdview.js leaves your page as it is until you turn it on. Then it scales the <code>body</code> with a CSS transform, so the whole document, its full width and height, margins included, fits inside the overlay. When you turn it off, the transform is removed, so the page is back exactly as it was.
             </p>
             <p>
                 The zoom starts from where you are: the part of the page you were looking at shrinks into its place in the overview. Clicking or tapping a place dives into it, keeping that place under your finger.
@@ -242,10 +254,13 @@
                 While Birdview is on, it watches the page and the window. If the content changes, for example when filtering a list, or if the window is resized or the phone rotated, Birdview zooms again on the new content.
             </p>
             <p>
-                Elements with <code>position: fixed</code> are a frame of the window. In Birdview, that frame stays on the page where the window was, and zooms out with it. A transform on an ancestor normally makes fixed elements lose their place: see <a href="/blog/position-fixed-and-css-transforms/">Position fixed and CSS transforms</a>. Birdview puts them back where they were seen.
+                The overlay is added outside the <code>body</code>, so it is never scaled. It uses the system font. To give it your page's font, style it with the ID <code>birdview_auto_generated_overlay</code>.
             </p>
             <p>
-                The overlay is added outside the <code>body</code>, so it is never scaled, and it takes the page's font.
+                Elements with <code>position: fixed</code> are tricky to handle. What should happen when the page zooms? Should they be fixed relative to the zoomed document? Should they be fixed relative the browser window?
+            </p>
+            <p>
+                Starting from 2.1, Birdview leaves their behavior to the browser. For visual/aesthetic reasons, a new <code>fade_fixed</code> behavior is added, which fades out fixed elements during birdview, and fade them back after birdview. The behavior can be turned off.
             </p>
         </section>
 

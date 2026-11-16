@@ -12,6 +12,13 @@ Visit [**achrafkassioui.com/birdview**](https://www.achrafkassioui.com/birdview/
 
 ## Change Log
 
+### 2.1
+
+- New `fade_fixed` setting: elements with `position: fixed` are faded out during Birdview. Can be turned off.
+- New `margin` setting: space between the window's edges and the overlay. The page shrinks to fit inside the overlay.  `zoom_when_fits` is gone.
+- The margin around the overlay prevents Safari UI from flickering and changing color to match the overlay background.
+- Various fixes.
+
 ### 2.0
 
 This is a major update with a lot of fixes and improvements.

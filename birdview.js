@@ -1,8 +1,8 @@
 ////////////////////////////////////////////////////////////////////////
 //
 // Birdview.js
-// 2.0
-// Current version: 13 Nov 2026
+// 2.1
+// Current version: 16 Nov 2026
 // First version: 20 May 2017
 //
 // www.achrafkassioui.com/birdview/
@@ -41,9 +41,9 @@
     // How it works
     //
     // Birdview leaves the page as it is until it is turned on. Then it scales the <body> with a CSS transform,
-    // so the whole document, margins included, fits inside the window. When it is turned off, the transform is removed.
+    // so the whole document, margins included, fits inside the overlay. When it is turned off, the transform is removed.
     // The overlay lives outside the <body>, directly in <html>, so it is never scaled.
-    // Elements fixed in the window, the button included, stay where they are seen and zoom out with the page (see holdFixedElements).
+    // Elements fixed in the window, the button included, are left to the browser. By default they fade out while Birdview is on (see fadeFixedElements).
     //
     // While Birdview is on, it watches the size of the <body> and of the window: when the content or the window changes,
     // Birdview zooms again, on the new content, and the scroll position stays put. Scrolling by hand (wheel, keys) turns it off.
@@ -64,31 +64,29 @@
     // Where the document's content starts and how much it extends past the <body>, measured when Birdview turns on.
     var page = { top: 0, left: 0, extra: 0, extra_X: 0 };
 
-    // The page's fixed elements, shifted back into place while Birdview is on. Also the window position they mark, and the scroll position last seen.
-    var held = [];
-    var frame_scroll = { x: 0, y: 0 };
-    var last_scroll = { x: 0, y: 0 };
+    // The fade of each fixed element, while it fades out, stays out, or fades back in.
+    var fades = [];
 
     // The scroll position when the last zoom was applied.
     var zoom_scroll = { x: 0, y: 0 };
 
-    /*
-    *
-    * The zoom moves like a spring, not along a fixed curve. The spring knows where the <body>'s zoom is (scale and translation),
-    * how fast it moves, and where it is going. It knows the same for the fixed elements' frame (fx, fy). A new target, at any moment,
-    * takes over from the current position and speed, so the zoom can turn around or change course without a jump or a restart.
-    *
-    */
     // From the moment Birdview turns on until the page is back to normal, zoomed back in. The callbacks mark this stay.
     var away = false;
 
     // When Birdview last turned on.
     var turned_on_at = 0;
 
+    /*
+    *
+    * The zoom moves like a spring, not along a fixed curve. The spring knows where the <body>'s zoom is (scale and translation),
+    * how fast it moves, and where it is going. A new target, at any moment,
+    * takes over from the current position and speed, so the zoom can turn around or change course without a jump or a restart.
+    *
+    */
     var spring = {
-        now: { scale: 1, x: 0, y: 0, fx: 0, fy: 0 },
-        speed: { scale: 0, x: 0, y: 0, fx: 0, fy: 0 },
-        target: { scale: 1, x: 0, y: 0, fx: 0, fy: 0 },
+        now: { scale: 1, x: 0, y: 0 },
+        speed: { scale: 0, x: 0, y: 0 },
+        target: { scale: 1, x: 0, y: 0 },
         animations: []
     };
 
@@ -100,12 +98,13 @@
     */
     var wheel_gesture = { last: 0, began_before_birdview: false };
 
-
     var touch = {
         startX: 0,
         startY: 0,
         startSpan: 0,
         count: 0,
+        // When the finger touched the page. A touch that began before Birdview turned on isn't a touch in Birdview.
+        began: 0,
         // Whether the finger moved since it touched the page in Birdview: then it scrolls, else it taps.
         moved: false
     };
@@ -130,11 +129,12 @@
         shortcut: 90,           // Z
         button: true,
         button_text: 'Birdview',
-        stiffness: 700,         // how hard the spring pulls the zoom to where it goes. 0 turns the animation off
-        overlay_transition: 0.3,    // seconds the overlay takes to fade in, and to fade out
         overlay: true,
-        origin_X: 50,           // where the zoomed page sits across the window: 0 left, 50 center, 100 right
-        zoom_when_fits: 0.9,    // how far to zoom out when the page already fits in the window
+        overlay_transition: 0.3,    // seconds the overlay takes to fade in, and to fade out
+        margin: 8,              // space between the window's edges and the overlay, in pixels. The page shrinks to fit inside the overlay
+        stiffness: 700,         // how hard the spring pulls the zoom to where it goes. 0 turns the animation off
+        origin_X: 50,           // where the zoomed page sits across the overlay: 0 left, 50 center, 100 right
+        fade_fixed: true,       // fade out elements with position: fixed while Birdview is on, and back in after
         callback_start: null,
         callback_end: null,
         touch: true
@@ -159,26 +159,8 @@
         overlay = document.createElement('div');
         overlay.id = 'birdview_auto_generated_overlay';
         overlay.style.setProperty('--birdview-fade', settings.overlay_transition + 's');
+        overlay.style.setProperty('--birdview-margin', settings.margin + 'px');
         html.appendChild(overlay);
-    }
-
-    /*
-    *
-    * Outside the <body>, the overlay wouldn't inherit the page's lettering: take it from the <body>, so it matches each page.
-    * Unless the page leaves the <body> in the browser's default font, often a serif, and sets its fonts further in.
-    * Then the overlay keeps Birdview's own, from birdview.css.
-    * Read each time Birdview turns on, once the page's styles have surely loaded.
-    *
-    */
-    function matchLettering(){
-        if(!overlay) return;
-        var lettering = getComputedStyle(body);
-        var plain = document.createElement('span');
-        plain.style.fontFamily = 'initial';
-        overlay.appendChild(plain);
-        overlay.style.fontFamily = lettering.fontFamily !== getComputedStyle(plain).fontFamily ? lettering.fontFamily : '';
-        plain.remove();
-        overlay.style.webkitFontSmoothing = lettering.webkitFontSmoothing;
     }
 
     function removeInterface(){
@@ -188,12 +170,6 @@
         overlay = null;
     }
 
-    /*
-    *
-    * Turning on, the overlay shows at once, so Safari on iPhone tints its toolbars right away, and its menu once zoomed out.
-    * Turning off, it fades out while the page zooms back in, and is gone once the zoom ends.
-    *
-    */
     function toggleOverlay(){
         if(!settings.overlay) return;
         if(!scaled && settings.stiffness === 0) hideOverlay();
@@ -211,9 +187,12 @@
         overlay.classList.remove('fading');
         overlay.classList.add('show', 'zooming');
         overlay.replaceChildren();
+        var header = document.createElement('div');
+        header.className = 'birdview_header';
         var h1 = document.createElement('h1');
         h1.innerText = 'Zooming...';
-        overlay.appendChild(h1);
+        header.appendChild(h1);
+        overlay.appendChild(header);
     }
 
     function buildMenu(){
@@ -222,21 +201,23 @@
         overlay.classList.add('show');
         overlay.replaceChildren();
 
+        // The title and the close button share one row, so the button is centered on the title whatever its font
+        var header = document.createElement('div');
+        header.className = 'birdview_header';
         var h1 = document.createElement('h1');
         h1.innerText = 'Birdview';
-        overlay.appendChild(h1);
+        header.appendChild(h1);
 
         var close = document.createElement('button');
         close.type = 'button';
         close.innerText = 'X';
-        close.tabIndex = 1;
         close.classList.add('birdview_toggle');
-        overlay.appendChild(close);
+        header.appendChild(close);
+        overlay.appendChild(header);
 
         var home = document.createElement('a');
         home.href = '/';
         home.innerText = 'Home';
-        home.tabIndex = 2;
         overlay.appendChild(home);
 
         if(location.pathname != '/'){
@@ -244,8 +225,7 @@
             var here = document.createElement('a');
             here.href = window.location.href;
             here.innerText = document.title;
-            here.tabIndex = 3;
-            overlay.appendChild(here);
+                overlay.appendChild(here);
         }
 
         var span = document.createElement('span');
@@ -300,18 +280,20 @@
 
     /*
     *
-    * The zoom that shows the whole document in the window, its full width and its full height, as a translation and a scale
-    * applied to the <body> from its top left corner. The document is scaled by whichever of its width or height is tighter,
-    * or by zoom_when_fits if it already fits. It is centered vertically, and placed across the window by origin_X.
+    * The zoom that shows the whole document inside the overlay, its full width and its full height,
+    * as a translation and a scale applied to the <body> from its top left corner. The document is scaled by whichever of its width or height is tighter,
+    * and never enlarged. It is centered vertically, and placed across by origin_X.
     * Given a scale, the zoom that places the document at that scale, the same way.
     *
     */
     function birdviewZoom(scale){
         var size = windowSize();
         var document_size = documentSize();
-        if(scale === undefined) scale = Math.min(size.width / document_size.width, size.height / document_size.height, settings.zoom_when_fits);
-        var offset_X = (size.width - document_size.width * scale) * settings.origin_X / 100;
-        var offset_Y = (size.height - document_size.height * scale) / 2;
+        var margin = settings.margin;
+        var box = { width: size.width - margin * 2, height: size.height - margin * 2 };
+        if(scale === undefined) scale = Math.min(box.width / document_size.width, box.height / document_size.height, 1);
+        var offset_X = margin + (box.width - document_size.width * scale) * settings.origin_X / 100;
+        var offset_Y = margin + (box.height - document_size.height * scale) / 2;
         return {
             scale: scale,
             offset_X: offset_X,
@@ -350,80 +332,48 @@
 
     /*
     *
-    * Elements with position: fixed are a frame of the window. In Birdview, that frame stays on the page, where the window was,
-    * and zooms out with it, like a mark of where you were.
-    *
-    * A transform on the <body> makes the <body> the place its fixed elements are positioned in, instead of the window,
-    * so they would jump to the top of the page. See: https://www.achrafkassioui.com/blog/position-fixed-and-css-transforms/
-    * So before zooming, the <body> gets a transform that changes nothing, Birdview sees where each fixed element went,
-    * and shifts it back by as much, with the translate property, which adds to the element's own transform.
-    * Once zoomed back in and the transform removed, the shift is removed too, and they are fixed in the window again.
+    * A transform on the <body> makes the <body> the box its fixed elements are positioned in, instead of the window.
+    * See: https://www.achrafkassioui.com/blog/position-fixed-and-css-transforms/
+    * So while the page is zoomed, its fixed elements sit on the page, sized and placed against the whole <body>, not on screen.
+    * Birdview leaves them to the browser. It only fades them out as it zooms out, and back in once the page is back to normal.
+    * The fade is an animation of their opacity, from their own to 0, so their styles are never touched. Reversing it turns it around midway.
     *
     */
-    function holdFixedElements(){
-        var fixed = Array.prototype.filter.call(body.querySelectorAll('*'), function(element){
+    function fadeFixedElements(out){
+        if(!settings.fade_fixed) return;
+        if(!out){
+            fades.forEach(function(fade){
+                if(fade.playbackRate > 0) fade.reverse();
+            });
+            return;
+        }
+        var faded = [];
+        Array.prototype.forEach.call(body.querySelectorAll('*'), function(element){
             var style = getComputedStyle(element);
-            return style.position === 'fixed' && style.translate === 'none' && style.display !== 'none';
-        });
-        var seen = fixed.map(function(element){ return element.getBoundingClientRect(); });
-        stopSpring();
-        spring.now = { scale: 1, x: 0, y: 0, fx: 0, fy: 0 };
-        spring.speed = { scale: 0, x: 0, y: 0, fx: 0, fy: 0 };
-        spring.target = { scale: 1, x: 0, y: 0, fx: 0, fy: 0 };
-        held = [];
-        render();
-        held = fixed.map(function(element, index){
-            var moved = element.getBoundingClientRect();
-            return { element: element, x: seen[index].left - moved.left, y: seen[index].top - moved.top };
-        });
-        render();
-        frame_scroll = { x: window.scrollX, y: window.scrollY };
-        last_scroll = { x: window.scrollX, y: window.scrollY };
-    }
-
-    /*
-    *
-    * Scrolling turns Birdview off, and the page keeps scrolling as it zooms back in. The frame follows the window as it scrolls,
-    * so once zoomed back in, the fixed elements are already where the window is.
-    *
-    */
-    function followScroll(){
-        var moved_X = window.scrollX - last_scroll.x;
-        var moved_Y = window.scrollY - last_scroll.y;
-        last_scroll = { x: window.scrollX, y: window.scrollY };
-        frame_scroll = { x: frame_scroll.x + moved_X, y: frame_scroll.y + moved_Y };
-        held.forEach(function(fixed){
-            fixed.x += moved_X;
-            fixed.y += moved_Y;
-        });
-        renderFrame();
-    }
-
-    /*
-    *
-    * Diving, the frame moves with the zoom to where the window will be, so it is in place when the page is scrolled there.
-    * Turning Birdview on again before the dive ends, it moves back to where the window is.
-    *
-    */
-    function moveFrameTo(scroll){
-        var moved_X = scroll.x - frame_scroll.x;
-        var moved_Y = scroll.y - frame_scroll.y;
-        frame_scroll = { x: scroll.x, y: scroll.y };
-        sync();
-        spring.target.fx += moved_X;
-        spring.target.fy += moved_Y;
-    }
-
-    function onFixedElement(x, y){
-        return held.some(function(fixed){
-            var rect = fixed.element.getBoundingClientRect();
-            return x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
+            if(style.position !== 'fixed' || style.display === 'none') return;
+            // Inside a fixed element already fading, it fades along
+            if(faded.some(function(parent){ return parent.contains(element); })) return;
+            faded.push(element);
+            // Still fading back in: it turns around from where it is
+            var fading = fades.filter(function(fade){ return fade.effect.target === element; })[0];
+            if(fading){
+                if(fading.playbackRate < 0) fading.reverse();
+                return;
+            }
+            var fade = element.animate([{ opacity: 0 }], { duration: settings.overlay_transition * 1000, easing: 'ease', fill: 'forwards' });
+            // Back in: the animation goes, and the element shows as it always did
+            fade.onfinish = function(){
+                if(fade.playbackRate > 0) return;
+                fade.cancel();
+                fades.splice(fades.indexOf(fade), 1);
+            };
+            fades.push(fade);
         });
     }
 
-    function releaseFixedElements(){
-        held.forEach(function(fixed){ fixed.element.style.translate = ''; });
-        held = [];
+    function removeFades(){
+        fades.forEach(function(fade){ fade.cancel(); });
+        fades = [];
     }
 
     ////////////////////////////////////////////////////////////////////////
@@ -435,7 +385,6 @@
     /*
     *
     * Zoom to a target. The spring takes it from where the zoom is now, at its current speed.
-    * The moves of the frame set just before (moveFrameTo) go along.
     *
     */
     function applyZoom(zoom){
@@ -451,7 +400,7 @@
         return 'translate(' + state.x + 'px, ' + state.y + 'px) scale(' + state.scale + ')';
     }
 
-    // Shows the zoom at rest where the spring is: the <body>'s transform, and the fixed elements' frame.
+    // Shows the zoom at rest where the spring is.
     function render(){
         /*
         *
@@ -463,17 +412,6 @@
         body.style.transformOrigin = '0 0';
         body.style.transition = 'none';
         body.style.transform = transformOf(spring.now);
-        renderFrame();
-    }
-
-    // While the frame moves, its animation adds its move to each fixed element's own place. At rest, the move is part of the place.
-    function renderFrame(){
-        var moving = spring.animations.length > 0;
-        held.forEach(function(fixed){
-            var x = fixed.x + (moving ? 0 : spring.now.fx);
-            var y = fixed.y + (moving ? 0 : spring.now.fy);
-            fixed.element.style.translate = x + 'px ' + y + 'px';
-        });
     }
 
     /*
@@ -525,7 +463,7 @@
         }
         if(path.length < 2){
             spring.now = copy(spring.target);
-            spring.speed = { scale: 0, x: 0, y: 0, fx: 0, fy: 0 };
+            spring.speed = { scale: 0, x: 0, y: 0 };
             render();
             return settle();
         }
@@ -537,19 +475,12 @@
         body.style.transform = transformOf(spring.target);
         var zoom = body.animate(path.map(function(point){ return { transform: transformOf(point) }; }), timing);
         spring.animations = [zoom];
-        if(spring.target.fx !== spring.now.fx || spring.target.fy !== spring.now.fy){
-            held.forEach(function(fixed){
-                var frames = path.map(function(point){ return { translate: point.fx + 'px ' + point.fy + 'px' }; });
-                spring.animations.push(fixed.element.animate(frames, { duration: timing.duration, easing: 'linear', fill: 'forwards', composite: 'add' }));
-            });
-        }
         spring.started = zoom;
-        renderFrame();
         zoom.onfinish = function(){
             if(spring.started !== zoom) return;
             stopSpring();
             spring.now = copy(spring.target);
-            spring.speed = { scale: 0, x: 0, y: 0, fx: 0, fy: 0 };
+            spring.speed = { scale: 0, x: 0, y: 0 };
             render();
             settle();
         };
@@ -586,13 +517,11 @@
     */
     function removeZoom(){
         stopSpring();
-        releaseFixedElements();
         body.style.transform = '';
         body.style.transition = '';
         body.style.transformOrigin = '';
         body.style.willChange = '';
         html.style.minHeight = '';
-        html.style.backgroundColor = '';
         html.style.minWidth = '';
     }
 
@@ -609,8 +538,7 @@
         window.scrollTo(scroll.x, scroll.y);
         spring.now.x += window.scrollX - from.x;
         spring.now.y += window.scrollY - from.y;
-        last_scroll = { x: window.scrollX, y: window.scrollY };
-        zoom_scroll = last_scroll;
+        zoom_scroll = { x: window.scrollX, y: window.scrollY };
         render();
     }
 
@@ -634,6 +562,7 @@
         }else{
             removeZoom();
             hideOverlay();
+            fadeFixedElements(false);
             away = false;
             if(settings.callback_end) settings.callback_end();
         }
@@ -655,20 +584,6 @@
     * While Birdview is on, the document keeps the size it needs for the current scroll position, so the scroll position never moves.
     *
     */
-    /*
-    *
-    * A page that colors only its <body> lets the browser spread that color over the whole window, behind the zoomed page.
-    * Safari on iPhone may not see it there when it tints its toolbars to match the overlay, and they'd come out a shade off.
-    * While Birdview is on, the <html> gets that color itself. Nothing changes on screen.
-    *
-    */
-    function holdPageColor(){
-        var transparent = 'rgba(0, 0, 0, 0)';
-        if(getComputedStyle(html).backgroundColor !== transparent) return;
-        var color = getComputedStyle(body).backgroundColor;
-        if(color !== transparent) html.style.backgroundColor = color;
-    }
-
     function holdScrollPosition(scroll){
         var size = windowSize();
         scroll = scroll || { x: window.scrollX, y: window.scrollY };
@@ -702,22 +617,17 @@
         wheel_gesture.began_before_birdview = performance.now() - wheel_gesture.last < 150;
         /*
         *
-        * Still zooming back in: turn around from where the page is, without waiting. The page and its fixed elements are already measured and held,
-        * and the page is already scrolled where it zooms in. The frame goes back to the window, in case it was on its way somewhere else.
+        * Still zooming back in: turn around from where the page is, without waiting. The page is already measured,
+        * and already scrolled where it zooms in.
         *
         */
-        if(body.style.transform){
-            moveFrameTo({ x: window.scrollX, y: window.scrollY });
-        }else{
-            measurePage();
-            holdFixedElements();
-            holdPageColor();
-        }
+        if(!body.style.transform) measurePage();
         holdScrollPosition();
         scaled = true;
         turned_on_at = performance.now();
-        matchLettering();
+        holdFocus(true);
         toggleOverlay();
+        fadeFixedElements(true);
         applyZoom(birdviewZoom());
         watch();
         // Turned on again while still zooming back in, the page was never back to normal: the callbacks see one stay in Birdview.
@@ -743,15 +653,24 @@
         }
     }
 
+    /*
+    *
+    * While the overlay is shown, the page under it is inert: Tab moves only between the overlay's links and close button,
+    * and the page's own links and fields can't take focus. Without the overlay, the zoomed page stays usable as it is.
+    *
+    */
+    function holdFocus(on){
+        if(on && !settings.overlay) return;
+        body.inert = on;
+    }
+
     // Turn Birdview off and zoom in, at a given place, or where the page is.
     function zoomInAt(scroll){
         scaled = false;
+        holdFocus(false);
         unwatch();
         toggleOverlay();
-        if(scroll){
-            moveFrameTo(scroll);
-            scrollAtOnce(scroll);
-        }
+        if(scroll) scrollAtOnce(scroll);
         applyZoom(pageZoom());
     }
 
@@ -771,22 +690,27 @@
             x: Math.min(Math.max(document_X - click_X, 0), furthest.x),
             y: Math.min(Math.max(document_Y - click_Y, 0), furthest.y)
         };
-        // A fixed element marks where the window was: diving on it goes back there, so it lands in its usual place
-        if(onFixedElement(click_X, click_Y)) place = { x: frame_scroll.x, y: frame_scroll.y };
         zoomInAt(place);
     }
 
-    // While Birdview is on, zoom again whenever the content or the window changes size, or the phone turns.
-    // The sizes Birdview last zoomed for. Browsers report sizes that haven't changed (on watching, on some scrolls). Only real changes re-zoom.
+    // The sizes Birdview last zoomed for. Browsers report sizes that haven't changed (on watching, on some scrolls). Only real changes zoom again.
     var zoomed_for = null;
+    var zoomed_for_window = null;
 
     function sizes(){
         var size = windowSize();
         return [body.offsetWidth, body.offsetHeight, size.width, size.height].join();
     }
 
+    function windowSizes(){
+        var size = windowSize();
+        return [size.width, size.height].join();
+    }
+
+    // While Birdview is on, zoom again whenever the content or the window changes size, or the phone turns.
     function watch(){
         zoomed_for = sizes();
+        zoomed_for_window = windowSizes();
         watcher = new ResizeObserver(rezoom);
         watcher.observe(body);
         window.addEventListener('resize', eventHandler, false);
@@ -802,16 +726,32 @@
 
     /*
     *
-    * Zoom again on the changed content or window, around the middle of what is seen:
+    * Zoom again on the changed content or window.
+    *
+    * When the window changes size, someone is resizing it, or the phone is turning. The zoom follows the window at once, frame by frame,
+    * so the page stays fitted to the window as it changes, with nothing catching up behind it.
+    *
+    * When only the content changes, for example a list being filtered, the spring takes the page to its new zoom, around the middle of what is seen:
     * first center the page again at the scale it has right now, at once, then zoom from there to the new scale.
     * Both are centered, so the page stays centered all the way, growing or shrinking around the middle of the window.
     *
     */
     function rezoom(){
         if(!scaled || sizes() === zoomed_for) return;
+        var window_changed = windowSizes() !== zoomed_for_window;
         zoomed_for = sizes();
+        zoomed_for_window = windowSizes();
         holdScrollPosition();
         sync();
+        if(window_changed){
+            var zoom = birdviewZoom();
+            spring.now = { scale: zoom.scale, x: zoom.x, y: zoom.y };
+            spring.speed = { scale: 0, x: 0, y: 0 };
+            spring.target = copy(spring.now);
+            zoom_scroll = { x: window.scrollX, y: window.scrollY };
+            render();
+            return;
+        }
         var centered = birdviewZoom(spring.now.scale);
         spring.now.x = centered.x;
         spring.now.y = centered.y;
@@ -852,8 +792,6 @@
     function eventHandler(e){
         if(e.type === 'resize') rezoom();
 
-        if(e.type === 'orientationchange') rezoom();
-
         if(e.type === 'keydown'){
             // The shortcut fires only on a fresh press with no modifier (so Cmd+Z stays undo), and never while typing in a field.
             var modifiers = e.ctrlKey || e.shiftKey || e.altKey || e.metaKey;
@@ -884,7 +822,6 @@
         }
 
         if(e.type === 'scroll'){
-            if(held.length) followScroll();
             if(scaled) keepPageInView();
         }
 
@@ -906,9 +843,9 @@
         if(e.type === 'touchstart'){
             // A touch in Birdview does nothing yet. Lifting the finger taps, moving it scrolls.
             touch.moved = false;
+            touch.began = e.timeStamp;
 
-            // The multi-touch handling logic is inspired by reveal.js https://github.com/hakimel/reveal.js/blob/master/js/reveal.js
-            // Store the coordinates of the first touch
+            // The multi-touch handling is inspired by reveal.js https://github.com/hakimel/reveal.js
             touch.startX = e.touches[0].clientX;
             touch.startY = e.touches[0].clientY;
             touch.count = e.touches.length;
@@ -931,7 +868,7 @@
         * so it can't press whatever is under the finger once zoomed in. Links and the overlay's buttons keep their click.
         *
         */
-        if(e.type === 'touchend' && scaled && !touch.moved && touch.count === 1 && e.changedTouches.length === 1){
+        if(e.type === 'touchend' && scaled && touch.began >= turned_on_at && !touch.moved && touch.count === 1 && e.changedTouches.length === 1){
             if(tapInBirdview(e.target, touch.startX, touch.startY)) e.preventDefault();
         }
 
@@ -941,7 +878,7 @@
             * One finger moving in Birdview scrolls: dive where it first touched, and let the browser scroll on from there, in the same gesture.
             *
             */
-            if(scaled && e.touches.length === 1 && touch.count === 1 && !touch.moved){
+            if(scaled && touch.began >= turned_on_at && e.touches.length === 1 && touch.count === 1 && !touch.moved){
                 touch.moved = true;
                 if(!isPartOfLink(e.target) && !onOverlayControl(e.target)) dive(touch.startX, touch.startY);
                 return;
@@ -1019,7 +956,6 @@
         document.addEventListener('wheel', eventHandler, {passive: false});
         document.addEventListener('scroll', eventHandler, false);
         document.addEventListener('mousedown', eventHandler, false);
-        window.addEventListener('orientationchange', eventHandler, false);
     };
 
     ////////////////////////////////////////////////////////////////////////
@@ -1032,7 +968,10 @@
         if(!settings) return;
         unwatch();
         scaled = false;
+        away = false;
+        body.inert = false;
         removeZoom();
+        removeFades();
         removeInterface();
 
         if(settings.touch){
@@ -1046,18 +985,9 @@
         document.removeEventListener('wheel', eventHandler, {passive: false});
         document.removeEventListener('scroll', eventHandler, false);
         document.removeEventListener('mousedown', eventHandler, false);
-        window.removeEventListener('orientationchange', eventHandler, false);
 
         settings = null;
     };
 
     return birdview;
 });
-
-/*
-
-To do:
-
-- When in birdview and the overlay is active, keyboard navigation should select options in the overlay only.
-
-*/
