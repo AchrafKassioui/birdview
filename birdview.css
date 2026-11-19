@@ -1,8 +1,8 @@
 /*
 *
 * Birdview.css
-* 2.2
-* 16 Nov 2026
+* 2.2.1
+* 19 Nov 2026
 *
 * www.achrafkassioui.com/birdview/
 *
@@ -141,12 +141,12 @@
     touch-action: pan-x pan-y;
 }
 
-/* Fading out */
+/* Fading out: the background fades, not the opacity, which Safari can flash */
 #birdview_auto_generated_overlay.show.fading{
     visibility: hidden;
-    opacity: 0;
+    background: rgba(0, 0, 0, 0);
     pointer-events: none;
-    transition: opacity var(--birdview-fade, 0.3s) ease, visibility 0s linear var(--birdview-fade, 0.3s);
+    transition: background-color var(--birdview-fade, 0.3s) ease, visibility 0s linear var(--birdview-fade, 0.3s);
 }
 
 /*

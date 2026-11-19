@@ -1,8 +1,8 @@
 ////////////////////////////////////////////////////////////////////////
 //
 // Birdview.js
-// 2.2
-// Current version: 16 Nov 2026
+// 2.2.1
+// Current version: 19 Nov 2026
 // First version: 20 May 2017
 //
 // www.achrafkassioui.com/birdview/
@@ -41,7 +41,7 @@
     // How it works
     //
     // Turning on scales the <body> with a CSS transform to fit the overlay.
-    // The overlay sits in <html>, outside the <body>, so it isn't scaled.
+    // The overlay and button sit in <html>, outside the <body>, so they aren't scaled.
     // Fixed elements fade out while on. Content or window changes zoom again.
     // Scrolling by hand turns it off.
     //
@@ -136,7 +136,8 @@
         button.innerText = settings.button_text;
         button.id = 'birdview_auto_generated_button';
         button.classList.add('birdview_toggle');
-        body.appendChild(button);
+        // Outside the <body>, so the zoom never moves it
+        html.appendChild(button);
         if(settings.adaptive_button) followBackdrop();
     }
 
@@ -360,7 +361,9 @@
             return;
         }
         var faded = [];
-        Array.prototype.forEach.call(body.querySelectorAll('*'), function(element){
+        var elements = Array.prototype.slice.call(body.querySelectorAll('*'));
+        if(button) elements.push(button);
+        elements.forEach(function(element){
             var style = getComputedStyle(element);
             if(style.position !== 'fixed' || style.display === 'none') return;
             // Inside a fading fixed element

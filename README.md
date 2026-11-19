@@ -10,7 +10,16 @@ Get a glance at a whole web page with an aerial view.
 
 Visit [**achrafkassioui.com/birdview**](https://www.achrafkassioui.com/birdview/).
 
+## Known Issues
+
+- In Mobile Safari, a fixed element with `backdrop-filter` can end up out of place after Birdview is disabled with a scroll. The same fixed elements without `backdrop-filter` stay in place.
+
 ## Change Log
+
+### 2.2.1
+
+- Fixed flashing overlay when birdview is disabled with a scroll in Mobile Safari.
+- Fixed the Birdview button position after Birdview is disabled with a scroll in Mobile Safari.
 
 ### 2.2.0
 
