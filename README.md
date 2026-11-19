@@ -4,7 +4,11 @@
 
 # Birdview.js
 
-Get a glance at a whole web page with an aerial view. Visit [**achrafkassioui.com/birdview**](https://www.achrafkassioui.com/birdview/) for demo and documentation.
+Get a glance at a whole web page with an aerial view.
+
+## Demo & Documentation
+
+Visit [**achrafkassioui.com/birdview**](https://www.achrafkassioui.com/birdview/).
 
 ## Known Issues
 
